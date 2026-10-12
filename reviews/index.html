@@ -95,10 +95,11 @@ html[dir="rtl"] .st{transform:scaleX(-1)}
 
 /* aspect rows: same treatment as the opening-hours list */
 .rows{display:flex;flex-direction:column}
-.arow-v{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:14px}
+.arow-v{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px 14px;border-radius:14px}
 .arow-v:nth-child(odd){background:var(--wash-2)}
-.arow-v span{color:var(--ink);font-weight:600}
-.arow-v .val{display:flex;align-items:center;gap:10px;color:var(--muted)}
+.arow-v > span:first-child{color:var(--ink);font-weight:600;line-height:1.35;min-width:0}
+.arow-v .val{display:grid;grid-template-columns:auto 2.4em;align-items:center;gap:10px;color:var(--muted)}
+.arow-v .val b{text-align:end}
 .arow-v .val b{font:700 16px/1 var(--f-en);color:var(--teal-deep)}
 
 /* gradient CTA (same as "احجز عبر واتساب") */
@@ -147,10 +148,11 @@ form{display:flex;flex-direction:column;gap:16px;position:relative}
 html[dir="rtl"] .big,html[dir="rtl"] .small{flex-direction:row-reverse}
 .big svg{width:48px;height:48px}
 .word{text-align:center;min-height:1.6em;font-weight:700;color:var(--teal)}
-.arow{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 12px;padding:10px 14px;border-radius:14px}
+/* label column flexes and may wrap; the star column has a fixed width, so every row's stars line up */
+.arow{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:10px 14px;border-radius:14px;min-height:56px}
 .arow:nth-child(odd){background:var(--wash-2)}
-.alabel{font-weight:600}
-.small{display:flex;gap:2px;margin-inline-start:auto;direction:ltr}
+.alabel{font-weight:600;line-height:1.35;min-width:0}
+.small{display:flex;gap:2px;direction:ltr}
 .small svg{width:30px;height:30px}
 select,input[type=text],input[type=tel],textarea{width:100%;background:var(--wash-2);border:1.5px solid var(--line);border-radius:16px;padding:13px 14px;font-size:16px}
 select:focus,input:focus,textarea:focus{border-color:var(--teal);outline:none;background:var(--card)}
@@ -426,7 +428,7 @@ const T = {
     qOverall: "بشكل عام، زيارتك كانت عاملة إزاي؟",
     words: ["", "سيئة", "مقبولة", "كويسة", "كويسة جدًا", "ممتازة"],
     qDetails: "قيّم التفاصيل",
-    aspects: { doctor: "الدكتور", clean: "النظافة", wait: "وقت الانتظار", staff: "الاستقبال وفريق العيادة", value: "السعر مقابل الخدمة" },
+    aspects: { doctor: "الدكتور", clean: "النظافة", wait: "وقت الانتظار", staff: "الاستقبال والفريق", value: "السعر مقابل الخدمة" },
     qDoctor: "مين الدكتور اللي عالجك؟", qTreatment: "الزيارة كانت لإيه؟", choose: "اختار…",
     qComment: "رأيك", phComment: "إيه اللي عجبك؟ وإيه اللي تحب المرضى التانيين يعرفوه؟",
     hComment: "المرضى التانيين ممكن يقروه لو وافقت.",
