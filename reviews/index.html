@@ -342,6 +342,8 @@ body.kiosk .tabs,body.kiosk footer a.home{display:none}
 const CONFIG = {
   // Apps Script web-app URL (ends in /exec). Empty = preview mode with sample reviews.
   endpoint: "",
+  // Sample reviews are for the design preview only. The live page never shows them.
+  demo: false,
   googleReviewUrl: "https://search.google.com/local/writereview?placeid=ChIJGwqoLuI5WBQRDiV81l6BqTM",
   homeUrl: "https://zoom-dental-links.zoomdentalcliniccairo.workers.dev/",
   kioskResetSeconds: 45,
@@ -566,7 +568,7 @@ function renderWall() {
      </article>`).join("");
 }
 async function loadWall() {
-  if (!CONFIG.endpoint) { wallData = SAMPLE; renderWall(); return; }
+  if (!CONFIG.endpoint) { wallData = CONFIG.demo ? SAMPLE : { count: 0 }; renderWall(); return; }
   try {
     const res = await fetch(CONFIG.endpoint, { cache: "no-store" });
     const j = await res.json();
@@ -614,7 +616,8 @@ $("form").addEventListener("submit", async e => {
   const btn = $("send"); btn.disabled = true; $("send-txt").textContent = T[lang].sending; $("err").hidden = true;
   try {
     let j;
-    if (!CONFIG.endpoint) { await new Promise(r => setTimeout(r, 700)); j = { ok: true }; }
+    if (!CONFIG.endpoint && CONFIG.demo) { await new Promise(r => setTimeout(r, 700)); j = { ok: true }; }
+    else if (!CONFIG.endpoint) { j = { ok: false }; }
     else {
       const res = await fetch(CONFIG.endpoint, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
       j = await res.json();
@@ -654,7 +657,7 @@ $("again").onclick = () => { resetForm(); window.scrollTo({ top: 0 }); };
 $("home").href = CONFIG.homeUrl;
 $("lang-en").onclick = () => setLang("en");
 $("lang-ar").onclick = () => setLang("ar");
-$("demo").hidden = !!CONFIG.endpoint;
+$("demo").hidden = !CONFIG.demo || !!CONFIG.endpoint;
 window.addEventListener("hashchange", applyMode);
 setLang(lang);
 applyMode();
