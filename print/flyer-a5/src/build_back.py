@@ -22,27 +22,41 @@ HEAD_W = 675.0                                    # headline ink width at the en
 GRID_TOP = {'band': 180.0, 'band2': 180.0, 'shift': 184.0}.get(HDR, 224.0)   # photo grid top
 TOP_H = 202.0 if HDR in ('left', 'center') else round((609 - GRID_TOP - 14) / 2, 1)   # top-row photo height
 
-# ---- honeycomb gallery (v5+): pointy-top regular hexagons, all the same orientation, so every pair of
-# facing edges is parallel. Three sizes: the two lateral cells (left/right) are the largest and run past
-# the page edges, the four diagonal cells are the smallest, and the centre sits between them,
-# HC_RC = (HC_RL + HC_RS) / 2, which makes the gap between every lateral and diagonal cell exactly HC_GAP.
+# ---- honeycomb gallery (v5+): a regular honeycomb of identical pointy-top cells with an even gap,
+# centred on the entrance. HC_STYLE picks the variant:
+#   A  centre cell enlarged HC_FEATURE x and drawn on top of the grid; sides filled with brand tints
+#   B  all cells the same size; centre marked by a thicker frame; sides filled with brand tints
+#   C  as A, but the two left side cells carry the lounge and office photos
 # Reference px; the top row runs past the top trim.
 import math
-HC_RL = 215.0                                    # lateral cells (left, right)
-HC_RS = 130.0                                    # diagonal cells (four)
-HC_RC = (HC_RL + HC_RS) / 2                      # centre, entrance
-HC_GAP = 12.0
+HC_STYLE = os.environ.get('HC_STYLE', 'A')
+HC_R = 140.0                                     # every grid cell
+HC_GAP = 10.0
+HC_FEATURE = 1.28                                # centre scale in A and C
 HC_CX, HC_BOTTOM = 527.0, 660.0
-_ap = lambda r: r * 3 ** 0.5 / 2                 # apothem (centre to edge)
-_dist = lambda r: _ap(HC_RC) + _ap(r) + HC_GAP   # centre-to-neighbour distance
-HC_CY = HC_BOTTOM - HC_RS - _dist(HC_RS) * 3 ** 0.5 / 2
-# neighbour direction (deg, screen axes, y down) -> (radius, photo)
-_ring = [(240, HC_RS, 'hx_reception'), (300, HC_RS, 'hx_treatment'),
-         (180, HC_RL, 'hx_doctor'), (0, HC_RL, 'hx_equipment'),
-         (120, HC_RS, 'hx_waiting'), (60, HC_RS, 'hx_sterilisation')]
-HC_CELLS = [(HC_CX, HC_CY, HC_RC, 'hx_entrance')] + [
-    (HC_CX + _dist(r) * math.cos(math.radians(a)), HC_CY + _dist(r) * math.sin(math.radians(a)), r, n)
-    for a, r, n in _ring]
+HC_D = 3 ** 0.5 * HC_R + HC_GAP                  # centre-to-centre, same row
+HC_DY = HC_D * 3 ** 0.5 / 2                      # row pitch
+HC_CY = HC_BOTTOM - HC_R - HC_DY
+TINT, TINT2 = '#D7E9EC', '#0A7183'
+
+
+def _cell(col, row):
+    """Grid position: row 0 = entrance row; odd rows are offset half a cell."""
+    return HC_CX + (col + (0.5 if row % 2 else 0)) * HC_D, HC_CY + row * HC_DY
+
+
+_photos = {(0, 0): 'hx_entrance', (-1, -1): 'hx_reception', (0, -1): 'hx_treatment',
+           (-1, 0): 'hx_doctor', (1, 0): 'hx_equipment', (-1, 1): 'hx_waiting', (0, 1): 'hx_sterilisation'}
+_side = {(-2, -1): 'tint', (-2, 0): 'tint', (2, 0): 'teal', (-2, 1): 'teal-logo', (1, 1): 'tint',
+         (-3, -1): 'tint', (-3, 1): 'tint', (2, 1): 'tint', (2, -1): 'tint'}
+# (1, -1) is left open on purpose: the corner wedge from the front shows through there.
+if HC_STYLE == 'C':
+    _side[(-2, -1)] = 'hx_lounge'
+    _side[(-2, 1)] = 'hx_office'
+# (x, y, radius, kind) — kind is a photo asset name, 'tint', 'teal' or 'teal-logo'; drawn in order
+HC_CELLS = [(*_cell(c, r), HC_R, k) for (c, r), k in _side.items()] + \
+           [(*_cell(c, r), HC_R, k) for (c, r), k in _photos.items() if (c, r) != (0, 0)] + \
+           [(*_cell(0, 0), HC_R * (1 if HC_STYLE == 'B' else HC_FEATURE), 'hx_entrance')]
 
 FS = json.load(open(ROOT / 'fs.json'))
 OFF = json.load(open(ROOT / 'off.json')) if (ROOT / 'off.json').exists() else {}
@@ -311,24 +325,31 @@ def hex_pts(cx, cy, r):
 
 
 def honeycomb(OX, OY, PW, PH):
-    """Photo cells: teal outline, thin white ring, photo clipped to the hexagon (cover crop).
-    Decorative cells: pale teal tint with a teal outline, drawn first so photos sit on top."""
-    defs, deco, cells = [], [], []
-    for i, (cx, cy, R, asset) in enumerate(HC_CELLS):
-        rin = R - 7.0                                 # photo hexagon inside the white ring
-        if asset is None:
-            deco.append(f"<polygon points='{hex_pts(cx, cy, R)}' fill='none' "
-                        f"stroke='{TEAL}' stroke-width='2.4' stroke-opacity='.35'/>")
+    """Photo cells: teal outline, white ring, photo clipped to the hexagon (cover crop).
+    Tint cells: flat brand colour, no photo. The entrance gets a heavier frame."""
+    defs, out = [], []
+    mark_w = b64(A / 'zoom-logo-mark-white.svg', 'image/svg+xml')
+    for i, (cx, cy, R, kind) in enumerate(HC_CELLS):
+        if kind in ('tint', 'teal', 'teal-logo'):
+            fill = TINT if kind == 'tint' else TINT2
+            out.append(f"<polygon points='{hex_pts(cx, cy, R)}' fill='{fill}'/>")
+            if kind == 'teal-logo':
+                s = R * 0.95
+                out.append(f"<image href='{mark_w}' x='{cx - s/2:.2f}' y='{cy - s/2:.2f}' width='{s:.2f}' height='{s:.2f}'/>")
             continue
+        centre = kind == 'hx_entrance'
+        ring = 11.0 if centre else 7.0
+        rin = R - ring
         defs.append(f"<clipPath id='hx{i}'><polygon points='{hex_pts(cx, cy, rin)}'/></clipPath>")
         side = 2 * rin
-        cells.append(f"<polygon points='{hex_pts(cx, cy, R)}' fill='#fff' stroke='{TEAL}' stroke-width='3'/>"
-                     f"<image href='{b64(A / (asset + '.jpg'), 'image/jpeg')}' x='{cx - side/2:.2f}' "
-                     f"y='{cy - side/2:.2f}' width='{side:.2f}' height='{side:.2f}' "
-                     f"preserveAspectRatio='xMidYMid slice' clip-path='url(#hx{i})'/>")
+        out.append(f"<polygon points='{hex_pts(cx, cy, R)}' fill='#fff' stroke='{TEAL}' "
+                   f"stroke-width='{5 if centre else 3}'/>"
+                   f"<image href='{b64(A / (kind + '.jpg'), 'image/jpeg')}' x='{cx - side/2:.2f}' "
+                   f"y='{cy - side/2:.2f}' width='{side:.2f}' height='{side:.2f}' "
+                   f"preserveAspectRatio='xMidYMid slice' clip-path='url(#hx{i})'/>")
     return (f"<svg style='position:absolute;left:0;top:0;overflow:visible' width='{PW:.2f}' height='{PH:.2f}'>"
             f"<defs>{''.join(defs)}</defs><g transform='translate({OX:.2f},{OY:.2f})'>"
-            f"{''.join(deco)}{''.join(cells)}</g></svg>")
+            f"{''.join(out)}</g></svg>")
 
 
 def map_svg():
