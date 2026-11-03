@@ -29,7 +29,7 @@ def pdf(html, dst, w, h):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--front-version', default='v5')
+    ap.add_argument('--front-version', default='v6')
     ap.add_argument('--back-version', default='v4')
     ap.add_argument('--back-press', action='store_true')
     a = ap.parse_args()

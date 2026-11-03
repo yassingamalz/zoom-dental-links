@@ -7,19 +7,19 @@ Everything here rebuilds from source with one command.
 
 | Side | Version | Status |
 |---|---|---|
-| Front | v5 | **Press-ready.** 11-line services list, social row (Instagram, Facebook, TikTok, @handle) |
+| Front | v6 | **Press-ready.** Doctors' 12-line services list (7.0 pt), social row (Instagram, Facebook, TikTok, @handle) |
 | Back | v4 | **Proof only.** Layout final; photos, map and QR are placeholders |
 
-Final files: `release/front-v5_back-v4/`
+Final files: `release/front-v6_back-v4/` (previous: `release/front-v5_back-v4/`)
 
 | File | Use |
 |---|---|
-| `ZoomDental_Flyer_A5_v5_PRESS_cropmarks_CMYK.pdf` | front, send to the printer |
-| `ZoomDental_Flyer_A5_v5_bleed_CMYK.pdf` | front, bleed only |
-| `ZoomDental_Flyer_A5_v5_plain.pdf` / `_300dpi.png` | front, screen proof |
+| `ZoomDental_Flyer_A5_v6_PRESS_cropmarks_CMYK.pdf` | front, send to the printer |
+| `ZoomDental_Flyer_A5_v6_bleed_CMYK.pdf` | front, bleed only |
+| `ZoomDental_Flyer_A5_v6_plain.pdf` / `_300dpi.png` | front, screen proof |
 | `ZoomDental_Flyer_A5_BACK_v4_PROOF.pdf` / `_300dpi.png` | back, approval proof, not for print |
 | `Zoom_Dental_Flyer_A5_Front_Back.pdf` | both sides, for WhatsApp approval |
-| `COLOUR_SPEC_v5.txt` | printer spec and change log |
+| `COLOUR_SPEC_v6.txt` | printer spec and change log |
 
 ## Layout
 
@@ -51,7 +51,7 @@ Needs Python 3 with `playwright` (Chromium), `pillow`, `numpy`, `opencv-python`,
 ```
 cd src
 python3 build_all.py                                       # front press set + back proof
-python3 build_all.py --front-version v6 --back-version v5  # name a new version
+python3 build_all.py --front-version v7 --back-version v5  # name a new version
 ```
 
 The front export runs the verification table automatically. All of these must PASS:
