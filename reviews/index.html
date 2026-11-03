@@ -54,9 +54,6 @@ button,input,select,textarea{font:inherit;color:inherit}
 html[lang="en"] .hero h1{font-family:var(--f-en);letter-spacing:-.01em}
 .sub{margin:0;color:var(--muted);font-size:16px;max-width:36ch}
 
-.demo{background:var(--tile);border-radius:18px;padding:12px 16px;font-size:14px;display:flex;flex-direction:column;gap:6px}
-.demo nav{display:flex;flex-wrap:wrap;gap:4px 16px}
-.demo a{color:var(--teal);font-weight:700}
 
 .card{background:var(--card);border-radius:var(--r-card);box-shadow:var(--shadow);padding:22px 20px;display:flex;flex-direction:column;gap:18px;min-width:0}
 .chead{display:flex;align-items:center;gap:14px}
@@ -71,9 +68,11 @@ html[lang="en"] .chead h2{font-family:var(--f-en)}
 legend.lbl{margin-bottom:8px}
 .req{color:var(--gold)}
 .hint{color:var(--muted);font-size:13.5px;margin:0}
-input[type=text],input[type=tel],textarea{width:100%;background:var(--wash-2);border:1.5px solid var(--line);border-radius:16px;padding:13px 14px;font-size:16px}
-input:focus,textarea:focus{border-color:var(--teal);outline:none;background:var(--card)}
+select,input[type=text],input[type=tel],textarea{width:100%;background:var(--wash-2);border:1.5px solid var(--line);border-radius:16px;padding:13px 14px;font-size:16px}
+select:focus,input:focus,textarea:focus{border-color:var(--teal);outline:none;background:var(--card)}
 textarea{min-height:96px;resize:vertical}
+select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-inline-end:44px;background-image:linear-gradient(45deg,transparent 50%,var(--teal) 50%),linear-gradient(135deg,var(--teal) 50%,transparent 50%);background-size:6px 6px;background-repeat:no-repeat;background-position:right 22px center,right 16px center}
+html[dir="rtl"] select{background-position:left 16px center,left 22px center}
 input[type=tel]{font-family:var(--f-en);direction:ltr;text-align:start}
 html[dir="rtl"] input[type=tel]{text-align:right}
 .field.bad input{border-color:var(--danger)}
@@ -97,19 +96,20 @@ html[dir="rtl"] input[type=tel]{text-align:right}
 .star.on svg{fill:var(--gold)}
 .star:hover svg{transform:scale(1.07)}
 .star b{font:700 13px/1 var(--f-en)}
-.ends{display:flex;justify-content:space-between;width:min(100%,304px);font-size:13px;font-weight:700;color:var(--muted)}
+.ends{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.ends-big{width:min(100%,304px)}
+.ends-small{width:100%}
 .word{min-height:1.7em;font-weight:800;font-size:17px;color:var(--teal)}
-.legend{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;background:var(--wash-2);border-radius:16px;padding:10px 8px;text-align:center;font-size:12.5px;line-height:1.35;color:var(--muted)}
-.legend b{display:block;font:800 15px/1.2 var(--f-en);color:var(--teal-deep)}
-.legend span{display:flex;flex-direction:column;gap:2px;min-width:0}
 
 .arows{display:flex;flex-direction:column;gap:6px}
 .arow{display:flex;flex-direction:column;gap:8px;padding:10px 14px;border-radius:16px;background:var(--wash-2)}
 .arow .top{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px}
 .arow .name{font-weight:700;line-height:1.35}
-.arow .name small{display:block;font-weight:700;font-size:13px;color:var(--teal)}
-.small{display:flex;gap:1px}
-.small .star svg{width:32px;height:32px}
+.arow .pick{font-weight:800;font-size:14px;color:var(--teal);text-align:end}
+.arow .scale{align-items:stretch;gap:4px}
+.small{display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+.small .star svg{width:34px;height:34px}
+.small .star b{font-size:12px}
 .why{display:flex;flex-direction:column;gap:6px;animation:open .18s ease-out}
 .why label{font-weight:700;font-size:14.5px;color:var(--teal-deep)}
 .why textarea{min-height:74px;background:var(--card)}
@@ -176,13 +176,6 @@ body.kiosk footer a{display:none}
     <p class="sub" data-i18n="intro">Your answers go to the clinic management only.</p>
   </header>
 
-  <div class="demo" id="demo" hidden>
-    <span data-i18n="demo">Preview. Answers are not saved until the Google Sheet is connected. Open as:</span>
-    <nav aria-label="Preview modes">
-      <a href="#web" data-i18n="modeWeb">Patient's phone (QR)</a>
-      <a href="#ipad" data-i18n="modeIpad">Clinic iPad</a>
-    </nav>
-  </div>
 
   <form id="form" novalidate>
     <!-- 1. Patient -->
@@ -199,11 +192,11 @@ body.kiosk footer a{display:none}
         <label class="lbl" for="phone" data-i18n="qPhone">Mobile number (optional)</label>
         <input type="tel" id="phone" maxlength="20" inputmode="tel" autocomplete="tel" placeholder="01x xxxx xxxx">
       </div>
-      <fieldset class="field">
-        <legend class="lbl" data-i18n="qHeard">How did you hear about us?</legend>
-        <div class="chips" id="heard" role="radiogroup"></div>
+      <div class="field">
+        <label class="lbl" for="heard" data-i18n="qHeard">How did you hear about us?</label>
+        <select id="heard"></select>
         <input type="text" id="heard-other" class="other" maxlength="80" hidden>
-      </fieldset>
+      </div>
     </div>
 
     <!-- 2. Visit -->
@@ -212,10 +205,10 @@ body.kiosk footer a{display:none}
         <span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 3.5c-2 0-3.5 1.6-3.5 4 0 3 1.2 4.6 1.8 8 .4 2.4.9 5 2.2 5 1.6 0 1.4-5.5 4-5.5s2.4 5.5 4 5.5c1.3 0 1.8-2.6 2.2-5 .6-3.4 1.8-5 1.8-8 0-2.4-1.5-4-3.5-4-1.9 0-2.6 1.2-4.5 1.2S9.4 3.5 7.5 3.5z"/></svg></span>
         <div><h2 data-i18n="cVisit">Your visit</h2></div>
       </div>
-      <fieldset class="field">
-        <legend class="lbl" data-i18n="qDoctor">Which doctor treated you?</legend>
-        <div class="chips" id="doctor" role="radiogroup"></div>
-      </fieldset>
+      <div class="field">
+        <label class="lbl" for="doctor" data-i18n="qDoctor">Which doctor treated you?</label>
+        <select id="doctor"></select>
+      </div>
       <fieldset class="field">
         <legend class="lbl" data-i18n="qReason">Reason for the visit</legend>
         <p class="hint" data-i18n="hReason">You can choose more than one.</p>
@@ -230,11 +223,11 @@ body.kiosk footer a{display:none}
         <span class="tile"><svg fill="currentColor"><use href="#i-star"/></svg></span>
         <div><h2 data-i18n="cRate">Your rating</h2></div>
       </div>
-      <div class="legend" id="legend" aria-hidden="true"></div>
       <fieldset class="field" id="f-overall">
         <legend class="lbl"><span data-i18n="qOverall">Overall, how was your visit?</span> <span class="req">*</span></legend>
         <div class="scale">
           <div class="big" id="overall" role="radiogroup"></div>
+          <div class="ends ends-big"><span class="e-low"></span><span class="e-high"></span></div>
           <div class="word" id="overall-word" aria-live="polite"></div>
         </div>
         <div class="why" id="overall-why" hidden>
@@ -339,9 +332,7 @@ const CONFIG = {
 const T = {
   ar: {
     title: "قيّم زيارتك", intro: "إجاباتك بتوصل لإدارة العيادة بس.",
-    demo: "معاينة: الإجابات مش بتتحفظ لحد ما نربط شيت جوجل. افتح الصفحة كـ:",
-    modeWeb: "موبايل المريض (QR)", modeIpad: "آيباد العيادة",
-    cPatient: "بياناتك", qName: "اسمك", qPhone: "رقم الموبايل (اختياري)",
+    cPatient: "بياناتك", choose: "اختار…", qName: "اسمك", qPhone: "رقم الموبايل (اختياري)",
     qHeard: "عرفتنا منين؟", phOther: "اكتب هنا",
     cVisit: "زيارتك", qDoctor: "مين الدكتور اللي عالجك؟",
     qReason: "السبب من الزيارة", hReason: "تقدر تختار أكتر من حاجة.",
@@ -366,9 +357,7 @@ const T = {
   },
   en: {
     title: "Rate your visit", intro: "Your answers go to the clinic management only.",
-    demo: "Preview: answers are not saved until the Google Sheet is connected. Open as:",
-    modeWeb: "Patient's phone (QR)", modeIpad: "Clinic iPad",
-    cPatient: "Your details", qName: "Your name", qPhone: "Mobile number (optional)",
+    cPatient: "Your details", choose: "Choose…", qName: "Your name", qPhone: "Mobile number (optional)",
     qHeard: "How did you hear about us?", phOther: "Write it here",
     cVisit: "Your visit", qDoctor: "Which doctor treated you?",
     qReason: "Reason for the visit", hReason: "You can choose more than one.",
@@ -434,6 +423,12 @@ function chips(el, list, kind, selected) {
   });
 }
 
+function dropdown(el, list, selected) {
+  el.innerHTML = `<option value="-1">${T[lang].choose}</option>` +
+    list.map((o, i) => `<option value="${i}"${i === selected ? " selected" : ""}>${o[lang]}</option>`).join("");
+  el.onchange = () => { state[el.id] = Number(el.value); render(); };
+}
+
 function starRow(el, value, size, onPick, label) {
   el.innerHTML = "";
   el.setAttribute("aria-label", label);
@@ -443,7 +438,7 @@ function starRow(el, value, size, onPick, label) {
     b.setAttribute("role", "radio"); b.setAttribute("aria-checked", String(n === value));
     b.setAttribute("aria-label", `${T[lang].stars(n)}: ${T[lang].words[n]}`);
     b.id = `${el.id}-s${n}`;
-    b.innerHTML = STAR + (size === "big" ? `<b>${n}</b>` : "");
+    b.innerHTML = STAR + `<b>${n}</b>`;
     b.onclick = () => onPick(n);
     el.appendChild(b);
   }
@@ -456,8 +451,8 @@ function whyLabel(n) {
 
 function render() {
   const t = T[lang];
-  chips($("heard"), CONFIG.heard, "radio", state.heard);
-  chips($("doctor"), CONFIG.doctors, "radio", state.doctor);
+  dropdown($("heard"), CONFIG.heard, state.heard);
+  dropdown($("doctor"), CONFIG.doctors, state.doctor);
   chips($("reason"), CONFIG.services, "multi", state.reasons);
   const heardOther = CONFIG.heard[state.heard] && CONFIG.heard[state.heard].other;
   $("heard-other").hidden = !heardOther;
@@ -465,7 +460,6 @@ function render() {
   $("reason-other").hidden = !state.reasons.has(otherIdx);
   $("heard-other").placeholder = $("reason-other").placeholder = t.phOther;
 
-  $("legend").innerHTML = [1, 2, 3, 4, 5].map(n => `<span><b>${n}</b>${t.words[n]}</span>`).join("");
 
   starRow($("overall"), state.overall, "big", n => { state.overall = n; $("f-overall").classList.remove("bad"); render(); }, t.qOverall);
   $("overall-word").textContent = state.overall ? t.words[state.overall] : "";
@@ -477,16 +471,20 @@ function render() {
     let row = $(`row-${a.key}`);
     if (!row) {
       row = document.createElement("div"); row.className = "arow"; row.id = `row-${a.key}`;
-      row.innerHTML = `<div class="top"><span class="name" id="nm-${a.key}"></span><div class="small" id="st-${a.key}" role="radiogroup"></div></div>
+      row.innerHTML = `<div class="top"><span class="name" id="nm-${a.key}"></span><span class="pick" id="pk-${a.key}" aria-live="polite"></span></div>
+        <div class="scale"><div class="small" id="st-${a.key}" role="radiogroup"></div><div class="ends ends-small" aria-hidden="true"><span class="e-low"></span><span class="e-high"></span></div></div>
         <div class="why" id="why-${a.key}" hidden><label for="wt-${a.key}" id="wl-${a.key}"></label><textarea id="wt-${a.key}" maxlength="500"></textarea></div>`;
       box.appendChild(row);
     }
     const v = state.aspects[a.key] || 0;
-    $(`nm-${a.key}`).innerHTML = `${a[lang]}${v ? `<small>${t.words[v]}</small>` : ""}`;
+    $(`nm-${a.key}`).textContent = a[lang];
+    $(`pk-${a.key}`).textContent = v ? t.words[v] : "";
     starRow($(`st-${a.key}`), v, "small", n => { state.aspects[a.key] = n; render(); $(`wt-${a.key}`).focus({ preventScroll: true }); }, a[lang]);
     $(`why-${a.key}`).hidden = !v;
     if (v) $(`wl-${a.key}`).textContent = whyLabel(v);
   });
+  document.querySelectorAll(".e-low").forEach(e => e.textContent = `1 = ${t.endLow}`);
+  document.querySelectorAll(".e-high").forEach(e => e.textContent = `5 = ${t.endHigh}`);
 }
 
 function setLang(l) {
@@ -584,7 +582,6 @@ $("name").addEventListener("input", () => $("f-name").classList.remove("bad"));
 $("home").href = CONFIG.homeUrl;
 $("lang-ar").onclick = () => setLang("ar");
 $("lang-en").onclick = () => setLang("en");
-$("demo").hidden = !!CONFIG.endpoint;
 window.addEventListener("hashchange", applyMode);
 applyMode();
 setLang(lang);
