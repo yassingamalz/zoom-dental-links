@@ -30,10 +30,10 @@ TOP_H = 202.0 if HDR in ('left', 'center') else round((609 - GRID_TOP - 14) / 2,
 # Reference px; the top row runs past the top trim.
 import math
 HC_STYLE = os.environ.get('HC_STYLE', 'A')
-HC_R = 140.0                                     # every grid cell
+HC_R = 134.0                                     # every grid cell
 HC_GAP = 10.0
 HC_FEATURE = 1.28                                # centre scale in A and C
-HC_CX, HC_BOTTOM = 527.0, 660.0
+HC_CX, HC_BOTTOM = 527.0, 628.0                  # bottom row ends ~60 px above the care title
 HC_D = 3 ** 0.5 * HC_R + HC_GAP                  # centre-to-centre, same row
 HC_DY = HC_D * 3 ** 0.5 / 2                      # row pitch
 HC_CY = HC_BOTTOM - HC_R - HC_DY
@@ -48,8 +48,7 @@ def _cell(col, row):
 _photos = {(0, 0): 'hx_entrance', (-1, -1): 'hx_reception', (0, -1): 'hx_treatment',
            (-1, 0): 'hx_doctor', (1, 0): 'hx_equipment', (-1, 1): 'hx_waiting', (0, 1): 'hx_sterilisation'}
 _side = {(-2, -1): 'tint', (-2, 0): 'tint', (2, 0): 'teal', (-2, 1): 'teal-logo', (1, 1): 'tint',
-         (-3, -1): 'tint', (-3, 1): 'tint', (2, 1): 'tint', (2, -1): 'tint'}
-# (1, -1) is left open on purpose: the corner wedge from the front shows through there.
+         (-3, -1): 'tint', (-3, 1): 'tint', (2, 1): 'tint', (2, -1): 'tint', (1, -1): 'tint'}
 if HC_STYLE == 'C':
     _side[(-2, -1)] = 'hx_lounge'
     _side[(-2, 1)] = 'hx_office'
@@ -186,9 +185,7 @@ def build(bleed_mm=0.0, marks_mm=0.0):
             P.append(f"<div style='{box(x, BAND_H / 2 - 1.5, 92, 3)}background:#fff;border-radius:2px'></div>")
         P.append(text('head', 527, 0, 'اتعرّف على عيادتنا', 'Cairo', 900, FS['head'], WHITE, 'c'))
     elif HDR == 'honey':
-        P.append(f"<img src='{png('wedge.png')}' style='{box(REFW - 399, -OY - 3, 402 + OX, 309 + OY)}"
-                 f"transform:scaleX(-1)'>")
-        P.append(honeycomb(OX, OY, PW, PH))
+        P.append(honeycomb(OX, OY, PW, PH))      # no corner wedge in the honeycomb layout
     else:
         P.append(f"<img src='{png('wedge.png')}' style='{box(REFW - 399, -OY - 3, 402 + OX, 309 + OY)}"
                  f"transform:scaleX(-1)'>")
