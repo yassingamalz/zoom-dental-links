@@ -22,22 +22,26 @@ HEAD_W = 675.0                                    # headline ink width at the en
 GRID_TOP = {'band': 180.0, 'band2': 180.0, 'shift': 184.0}.get(HDR, 224.0)   # photo grid top
 TOP_H = 202.0 if HDR in ('left', 'center') else round((609 - GRID_TOP - 14) / 2, 1)   # top-row photo height
 
-# ---- honeycomb gallery (v5+): 7 identical regular hexagons, pointy top, entrance in the centre.
-# Placed in reference px. Bottom row ends at HC_BOTTOM; the top row may run past the top trim.
-HC_R = 130.0                                     # circumradius (centre to corner)
-HC_GAP = 12.0                                    # white gap between neighbouring cells
-HC_CX, HC_BOTTOM = 527.0, 642.0
-HC_D = 3 ** 0.5 * HC_R + HC_GAP                  # centre-to-centre distance
+# ---- honeycomb gallery (v5+): pointy-top regular hexagons. A larger centre cell holds the entrance
+# with its sign; six equal cells sit around it, each parallel to the centre's facing edge at HC_GAP.
+# Outline-only cells carry the pattern to the page edges. Reference px; the top row may run past
+# the top trim.
+HC_RC = 160.0                                    # centre circumradius
+HC_RS = 132.0                                    # ring circumradius (all six identical)
+HC_GAP = 12.0                                    # white gap between facing edges
+HC_CX, HC_BOTTOM = 527.0, 660.0
+HC_D = 3 ** 0.5 / 2 * (HC_RC + HC_RS) + HC_GAP   # centre-to-ring-cell distance
 HC_DY = HC_D * 3 ** 0.5 / 2                      # row pitch
-HC_CY = HC_BOTTOM - HC_R - HC_DY                 # centre row
-# (dx in units of HC_D, row -1/0/+1, photo asset or None for a decorative cell)
-HC_CELLS = [(0, 0, 'hx_entrance'),
-            (-.5, -1, 'hx_reception'), (.5, -1, 'hx_treatment'),
-            (-1, 0, 'hx_doctor'), (1, 0, 'hx_equipment'),
-            (-.5, 1, 'hx_waiting'), (.5, 1, 'hx_sterilisation'),
-            # decorative cells that carry the pattern out to the page edges
-            (-1.5, -1, 'hx_lounge'), (-1.5, 1, 'hx_office'), (1.5, 1, 'hx_sign'),
-            (1.5, -1, None), (-2, 0, None), (2, 0, None)]   # top-right stays open over the corner wedge
+HC_CY = HC_BOTTOM - HC_RS - HC_DY                # centre row
+HC_DS = 3 ** 0.5 * HC_RS + HC_GAP                # ring-cell to outer-cell distance (same row)
+# (x, y, radius, photo asset or None for an outline-only cell)
+_ring = {'tl': (-.5, -1), 'tr': (.5, -1), 'l': (-1, 0), 'r': (1, 0), 'bl': (-.5, 1), 'br': (.5, 1)}
+_pos = {k: (HC_CX + dx * HC_D, HC_CY + row * HC_DY) for k, (dx, row) in _ring.items()}
+HC_CELLS = [(HC_CX, HC_CY, HC_RC, 'hx_entrance')] + [
+    (*_pos[k], HC_RS, a) for k, a in (('tl', 'hx_reception'), ('tr', 'hx_treatment'), ('l', 'hx_doctor'),
+                                      ('r', 'hx_equipment'), ('bl', 'hx_waiting'), ('br', 'hx_sterilisation'))] + [
+    (_pos[k][0] + sgn * HC_DS, _pos[k][1], HC_RS, None)
+    for k, sgn in (('tl', -1), ('tr', 1), ('l', -1), ('r', 1), ('bl', -1), ('br', 1))]
 
 FS = json.load(open(ROOT / 'fs.json'))
 OFF = json.load(open(ROOT / 'off.json')) if (ROOT / 'off.json').exists() else {}
@@ -309,17 +313,15 @@ def honeycomb(OX, OY, PW, PH):
     """Photo cells: teal outline, thin white ring, photo clipped to the hexagon (cover crop).
     Decorative cells: pale teal tint with a teal outline, drawn first so photos sit on top."""
     defs, deco, cells = [], [], []
-    rin = HC_R - 7.0                                  # photo hexagon inside the white ring
-    for i, (dx, row, asset) in enumerate(HC_CELLS):
-        cx = HC_CX + dx * HC_D
-        cy = HC_CY + row * HC_DY
+    for i, (cx, cy, R, asset) in enumerate(HC_CELLS):
+        rin = R - 7.0                                 # photo hexagon inside the white ring
         if asset is None:
-            deco.append(f"<polygon points='{hex_pts(cx, cy, HC_R)}' fill='none' "
+            deco.append(f"<polygon points='{hex_pts(cx, cy, R)}' fill='none' "
                         f"stroke='{TEAL}' stroke-width='2.4' stroke-opacity='.35'/>")
             continue
         defs.append(f"<clipPath id='hx{i}'><polygon points='{hex_pts(cx, cy, rin)}'/></clipPath>")
         side = 2 * rin
-        cells.append(f"<polygon points='{hex_pts(cx, cy, HC_R)}' fill='#fff' stroke='{TEAL}' stroke-width='3'/>"
+        cells.append(f"<polygon points='{hex_pts(cx, cy, R)}' fill='#fff' stroke='{TEAL}' stroke-width='3'/>"
                      f"<image href='{b64(A / (asset + '.jpg'), 'image/jpeg')}' x='{cx - side/2:.2f}' "
                      f"y='{cy - side/2:.2f}' width='{side:.2f}' height='{side:.2f}' "
                      f"preserveAspectRatio='xMidYMid slice' clip-path='url(#hx{i})'/>")

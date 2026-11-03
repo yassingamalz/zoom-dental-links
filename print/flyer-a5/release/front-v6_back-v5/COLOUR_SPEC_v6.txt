@@ -91,15 +91,14 @@ v6 REVISION (this build, 2026-11-03)
     Text 7.0 pt (set by the longest line, "ابتسامة هوليوود الثابتة و المتحركة"). No other change.
 
 BACK v5 (proof, 2026-11-03)
-  - Header and photo grid replaced by a honeycomb gallery: 7 identical regular hexagons
-    (pointy top, R = 130 ref px), clinic entrance in the centre, six photos around it.
-    Six outline-only cells carry the pattern to the page edges; the flipped corner wedge
-    shows through behind them. Title "اتعرّف على عيادتنا" removed, divider removed.
+  - Header and photo grid replaced by a honeycomb gallery of regular pointy-top hexagons:
+    a larger centre cell (R 160 ref px) holding the whole entrance with the facade sign and
+    logo, and six identical cells around it (R 132), each 12 px from the centre's facing edge.
+    Outline-only cells carry the pattern to the page edges; the flipped corner wedge shows
+    through top right. The top row runs past the top trim by design.
+  - Title "اتعرّف على عيادتنا" and the old divider removed.
   - Section title now "رعاية دقيقة بالتقنيات الحديثة" (set 9.5% smaller to clear the sparkles).
-  - Honeycomb photos are the clinic's own photos (originals in photos-src/), square crops:
-    centre entrance (exterior), top-left reception, top-right treatment room, left hallway,
-    right treatment room detail, bottom-left waiting area, bottom-right sterilisation.
-    Outer ring: top-left TV lounge, bottom-left office, bottom-right the facade sign with
-    logo and numbers (padded on top in the sign's dark tone so the lettering clears the
-    hexagon point). Top-right and the two edge cells stay outline-only over the wedge.
+  - Photos are the clinic's own (originals in photos-src/): centre entrance + sign, top-left
+    reception, top-right treatment room, left hallway, right treatment room detail,
+    bottom-left waiting area, bottom-right sterilisation.
     Still placeholders: intraoral scanner photo (ph_scan.png), map, QR.
