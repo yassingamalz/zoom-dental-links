@@ -1,0 +1,9 @@
+# flyer build output
+print/flyer-a5/out/
+print/flyer-a5/src/front/
+print/flyer-a5/src/back_plain.html
+print/flyer-a5/src/back_bleed.html
+print/flyer-a5/src/hi.png
+print/flyer-a5/src/mine.png
+print/flyer-a5/src/cmp_full.png
+__pycache__/
