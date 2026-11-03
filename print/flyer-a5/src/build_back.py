@@ -15,12 +15,28 @@ TRIM_W, TRIM_H = 148.0, 210.0
 KX, KY = TRIM_W / REFW, TRIM_H / REFH
 TEAL, WHITE, NAVY = '#0A7183', '#FFFFFF', '#33475A'
 TAGS = os.environ.get('TAGS', '1') == '1'          # placeholder tags, proof only
-HDR = os.environ.get('HDR', 'shift')               # header layout: 'left' or 'center'
-HEAD_LEFT = {'left': 37.0, 'center': 141.7, 'band': 0.0, 'band2': 0.0, 'shift': 147.0}[HDR]  # headline ink left edge
+HDR = os.environ.get('HDR', 'honey')               # header layout: 'honey' (v5+), or older 'shift'/'left'/'center'
+HEAD_LEFT = {'left': 37.0, 'center': 141.7, 'band': 0.0, 'band2': 0.0, 'shift': 147.0, 'honey': 0.0}[HDR]  # headline ink left edge
 BAND_H = 150.0                                    # teal header band height (HDR='band')
 HEAD_W = 675.0                                    # headline ink width at the enlarged size
 GRID_TOP = {'band': 180.0, 'band2': 180.0, 'shift': 184.0}.get(HDR, 224.0)   # photo grid top
 TOP_H = 202.0 if HDR in ('left', 'center') else round((609 - GRID_TOP - 14) / 2, 1)   # top-row photo height
+
+# ---- honeycomb gallery (v5+): 7 identical regular hexagons, pointy top, entrance in the centre.
+# Placed in reference px. Bottom row ends at HC_BOTTOM; the top row may run past the top trim.
+HC_R = 130.0                                     # circumradius (centre to corner)
+HC_GAP = 12.0                                    # white gap between neighbouring cells
+HC_CX, HC_BOTTOM = 527.0, 642.0
+HC_D = 3 ** 0.5 * HC_R + HC_GAP                  # centre-to-centre distance
+HC_DY = HC_D * 3 ** 0.5 / 2                      # row pitch
+HC_CY = HC_BOTTOM - HC_R - HC_DY                 # centre row
+# (dx in units of HC_D, row -1/0/+1, photo asset or None for a decorative cell)
+HC_CELLS = [(0, 0, 'hx_entrance'),
+            (-.5, -1, 'hx_reception'), (.5, -1, 'hx_treatment'),
+            (-1, 0, 'hx_doctor'), (1, 0, 'hx_equipment'),
+            (-.5, 1, 'hx_waiting'), (.5, 1, 'hx_sterilisation'),
+            # decorative cells that carry the pattern out to the page edges
+            (-1.5, -1, None), (1.5, -1, None), (-2, 0, None), (2, 0, None), (-1.5, 1, None), (1.5, 1, None)]
 
 FS = json.load(open(ROOT / 'fs.json'))
 OFF = json.load(open(ROOT / 'off.json')) if (ROOT / 'off.json').exists() else {}
@@ -149,6 +165,10 @@ def build(bleed_mm=0.0, marks_mm=0.0):
         for x in (527 - HEAD_W / 2 - 24 - 92, 527 + HEAD_W / 2 + 24):
             P.append(f"<div style='{box(x, BAND_H / 2 - 1.5, 92, 3)}background:#fff;border-radius:2px'></div>")
         P.append(text('head', 527, 0, 'اتعرّف على عيادتنا', 'Cairo', 900, FS['head'], WHITE, 'c'))
+    elif HDR == 'honey':
+        P.append(f"<img src='{png('wedge.png')}' style='{box(REFW - 399, -OY - 3, 402 + OX, 309 + OY)}"
+                 f"transform:scaleX(-1)'>")
+        P.append(honeycomb(OX, OY, PW, PH))
     else:
         P.append(f"<img src='{png('wedge.png')}' style='{box(REFW - 399, -OY - 3, 402 + OX, 309 + OY)}"
                  f"transform:scaleX(-1)'>")
@@ -158,15 +178,19 @@ def build(bleed_mm=0.0, marks_mm=0.0):
             P.append(f"<img src='{png('sparkles.png')}' style='{box(HEAD_LEFT + HEAD_W + 6, 30, 98, 80)}transform:scaleX(-1)'>")
         P.append(text('head', 689, 0, 'اتعرّف على عيادتنا', 'Cairo', 900, FS['head'], TEAL, 'r'))
 
-    # --- photo grid
+    # --- photo grid (older header layouts only)
     G = GRID_TOP
-    photos = [('ph_large', 37, G, 476, 609 - G), ('ph_tmid', 527, G, 246, TOP_H),
+    if HDR == 'honey':
+        photos, pills = [], []
+    else:
+        photos = None
+    photos = photos if photos is not None else [('ph_large', 37, G, 476, 609 - G), ('ph_tmid', 527, G, 246, TOP_H),
               ('ph_tright', 787, G, 230, TOP_H), ('ph_bwide', 527, G + TOP_H + 14, 490, 609 - G - TOP_H - 14)]
     for n, x, y, w, h in photos:
         P.append(f"<div style='{box(x, y, w, h)}border-radius:22px;overflow:hidden;"
                  f"background:url({png(n + '.png')}) center/cover no-repeat'></div>")
         P.append(tag(x + 14, y + 12))
-    pills = [('pl', 139, 566, 242, 42, 'منطقة الاستقبال', FS['pl']),
+    pills = pills if HDR == 'honey' else [('pl', 139, 566, 242, 42, 'منطقة الاستقبال', FS['pl']),
              ('pm', 533, GRID_TOP + TOP_H - 34, 178, 34, 'غرفة العلاج', FS['psm']),
              ('pr', 795, GRID_TOP + TOP_H - 34, 190, 34, 'أحدث الأجهزة', FS['psm']),
              ('pb', 541, 572, 186, 37, 'تعقيم الأدوات', FS['psm'])]
@@ -177,13 +201,14 @@ def build(bleed_mm=0.0, marks_mm=0.0):
     # --- divider with centre notch
     dv = (f"M {X(39):.2f} {Y(632):.2f} L {X(505):.2f} {Y(632):.2f} L {X(521.5):.2f} {Y(646):.2f}"
           f" L {X(538):.2f} {Y(632):.2f} L {X(1014):.2f} {Y(632):.2f}")
-    P.append(f"<svg style='position:absolute;left:0;top:0' width='{PW:.2f}' height='{PH:.2f}'>"
-             f"<path d='{dv}' fill='none' stroke='{TEAL}' stroke-width='3.2' stroke-linejoin='round' "
-             f"stroke-linecap='round'/></svg>")
+    if HDR != 'honey':
+        P.append(f"<svg style='position:absolute;left:0;top:0' width='{PW:.2f}' height='{PH:.2f}'>"
+                 f"<path d='{dv}' fill='none' stroke='{TEAL}' stroke-width='3.2' stroke-linejoin='round' "
+                 f"stroke-linecap='round'/></svg>")
 
     # --- care section
     P.append(f"<img src='{png('sparkles.png')}' style='{box(45, 660, 50, 41)}'>")
-    P.append(text('title', 689, 0, 'رعاية دقيقة وتقنيات حديثة', 'Cairo', 900, FS['title'], TEAL, 'r'))
+    P.append(text('title', 689, 0, ('رعاية دقيقة بالتقنيات الحديثة' if HDR == 'honey' else 'رعاية دقيقة وتقنيات حديثة'), 'Cairo', 900, FS['title'] * (0.905 if HDR == 'honey' else 1), TEAL, 'r'))
     P.append(text('para1', 374, 0, 'نحرص على راحتك واهتمامك، ونستخدم التقنيات المناسبة',
                   'Cairo', 500, FS['para'], TEAL, 'c'))
     P.append(text('para2', 382.5, 0, 'لتشخيص دقيق وخطة علاج تناسب احتياجاتك.',
@@ -271,6 +296,35 @@ html,body{{width:{page_w}mm;height:{page_h}mm;background:#fff;overflow:hidden;
   transform:scale({sx:.6f},{sy:.6f});transform-origin:0 0;background:#fff}}
 img{{display:block}}
 </style></head><body><div id="page"><div id="stage">{body}</div></div></body></html>"""
+
+
+def hex_pts(cx, cy, r):
+    import math
+    return ' '.join(f"{cx + r * math.cos(math.radians(a)):.2f},{cy + r * math.sin(math.radians(a)):.2f}"
+                    for a in (-90, -30, 30, 90, 150, 210))
+
+
+def honeycomb(OX, OY, PW, PH):
+    """Photo cells: teal outline, thin white ring, photo clipped to the hexagon (cover crop).
+    Decorative cells: pale teal tint with a teal outline, drawn first so photos sit on top."""
+    defs, deco, cells = [], [], []
+    rin = HC_R - 7.0                                  # photo hexagon inside the white ring
+    for i, (dx, row, asset) in enumerate(HC_CELLS):
+        cx = HC_CX + dx * HC_D
+        cy = HC_CY + row * HC_DY
+        if asset is None:
+            deco.append(f"<polygon points='{hex_pts(cx, cy, HC_R)}' fill='none' "
+                        f"stroke='{TEAL}' stroke-width='2.4' stroke-opacity='.35'/>")
+            continue
+        defs.append(f"<clipPath id='hx{i}'><polygon points='{hex_pts(cx, cy, rin)}'/></clipPath>")
+        side = 2 * rin
+        cells.append(f"<polygon points='{hex_pts(cx, cy, HC_R)}' fill='#fff' stroke='{TEAL}' stroke-width='3'/>"
+                     f"<image href='{b64(A / (asset + '.jpg'), 'image/jpeg')}' x='{cx - side/2:.2f}' "
+                     f"y='{cy - side/2:.2f}' width='{side:.2f}' height='{side:.2f}' "
+                     f"preserveAspectRatio='xMidYMid slice' clip-path='url(#hx{i})'/>")
+    return (f"<svg style='position:absolute;left:0;top:0;overflow:visible' width='{PW:.2f}' height='{PH:.2f}'>"
+            f"<defs>{''.join(defs)}</defs><g transform='translate({OX:.2f},{OY:.2f})'>"
+            f"{''.join(deco)}{''.join(cells)}</g></svg>")
 
 
 def map_svg():

@@ -89,3 +89,11 @@ v6 REVISION (this build, 2026-11-03)
   - Services list replaced with the doctors' signed list: all 12 services, exact wording and
     order as given ("كشف شامل" … "زراعة الاسنان"), same column, same check bullets.
     Text 7.0 pt (set by the longest line, "ابتسامة هوليوود الثابتة و المتحركة"). No other change.
+
+BACK v5 (proof, 2026-11-03)
+  - Header and photo grid replaced by a honeycomb gallery: 7 identical regular hexagons
+    (pointy top, R = 130 ref px), clinic entrance in the centre, six photos around it.
+    Six outline-only cells carry the pattern to the page edges; the flipped corner wedge
+    shows through behind them. Title "اتعرّف على عيادتنا" removed, divider removed.
+  - Section title now "رعاية دقيقة بالتقنيات الحديثة" (set 9.5% smaller to clear the sparkles).
+  - Photos (hx_*.jpg) are crops of the ChatGPT comp: placeholders, not for print.

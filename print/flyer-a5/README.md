@@ -8,16 +8,16 @@ Everything here rebuilds from source with one command.
 | Side | Version | Status |
 |---|---|---|
 | Front | v6 | **Press-ready.** Doctors' 12-line services list (7.0 pt), social row (Instagram, Facebook, TikTok, @handle) |
-| Back | v4 | **Proof only.** Layout final; photos, map and QR are placeholders |
+| Back | v5 | **Proof only.** Honeycomb gallery (7 hexagons, entrance centre); photos, map and QR are placeholders |
 
-Final files: `release/front-v6_back-v4/` (previous: `release/front-v5_back-v4/`)
+Final files: `release/front-v6_back-v5/` (previous: `release/front-v5_back-v4/`)
 
 | File | Use |
 |---|---|
 | `ZoomDental_Flyer_A5_v6_PRESS_cropmarks_CMYK.pdf` | front, send to the printer |
 | `ZoomDental_Flyer_A5_v6_bleed_CMYK.pdf` | front, bleed only |
 | `ZoomDental_Flyer_A5_v6_plain.pdf` / `_300dpi.png` | front, screen proof |
-| `ZoomDental_Flyer_A5_BACK_v4_PROOF.pdf` / `_300dpi.png` | back, approval proof, not for print |
+| `ZoomDental_Flyer_A5_BACK_v5_PROOF.pdf` / `_300dpi.png` | back, approval proof, not for print |
 | `Zoom_Dental_Flyer_A5_Front_Back.pdf` | both sides, for WhatsApp approval |
 | `COLOUR_SPEC_v6.txt` | printer spec and change log |
 
@@ -71,10 +71,10 @@ fonts embedded, ink TAC under 300%, crop marks K100 only, QR decodes to
 
 Three placeholders stop the back from going to print:
 
-1. **Photos:** replace `src/assets/ph_large.png`, `ph_tmid.png`, `ph_tright.png`, `ph_bwide.png`,
-   `ph_scan.png` with real clinic photos (reception, treatment room, equipment, sterilisation,
-   intraoral scanner). Same file names. The current ones are AI images and show a "ZOOM" sign
-   that doesn't exist at the clinic.
+1. **Photos:** replace the honeycomb photos in `src/assets/` with real clinic photos, same file
+   names, square, at least 1200 × 1200 px: `hx_entrance.jpg` (centre), `hx_reception.jpg`,
+   `hx_treatment.jpg`, `hx_doctor.jpg`, `hx_equipment.jpg`, `hx_waiting.jpg`,
+   `hx_sterilisation.jpg`, plus `ph_scan.png` (intraoral scanner). The current ones are AI images.
 2. **QR:** needs the clinic's Google Maps share link. Replace the placeholder box in
    `build_back.py` (search "QR<br>Google Maps") with the generated QR, then add `qr_expect` to the
    back `verify` call in `build_all.py`.
