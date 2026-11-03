@@ -96,4 +96,7 @@ BACK v5 (proof, 2026-11-03)
     Six outline-only cells carry the pattern to the page edges; the flipped corner wedge
     shows through behind them. Title "اتعرّف على عيادتنا" removed, divider removed.
   - Section title now "رعاية دقيقة بالتقنيات الحديثة" (set 9.5% smaller to clear the sparkles).
-  - Photos (hx_*.jpg) are crops of the ChatGPT comp: placeholders, not for print.
+  - Honeycomb photos are the clinic's own photos (originals in photos-src/), square crops:
+    centre entrance (exterior), top-left reception, top-right treatment room, left hallway,
+    right treatment room detail, bottom-left waiting area, bottom-right sterilisation.
+    Still placeholders: intraoral scanner photo (ph_scan.png), map, QR.
