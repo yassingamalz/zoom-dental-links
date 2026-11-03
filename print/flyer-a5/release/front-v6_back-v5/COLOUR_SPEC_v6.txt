@@ -91,11 +91,11 @@ v6 REVISION (this build, 2026-11-03)
     Text 7.0 pt (set by the longest line, "ابتسامة هوليوود الثابتة و المتحركة"). No other change.
 
 BACK v5 (proof, 2026-11-03)
-  - Header and photo grid replaced by a honeycomb gallery of regular pointy-top hexagons:
-    a larger centre cell (R 160 ref px) holding the whole entrance with the facade sign and
-    logo, and six identical cells around it (R 132), each 12 px from the centre's facing edge.
-    Outline-only cells carry the pattern to the page edges; the flipped corner wedge shows
-    through top right. The top row runs past the top trim by design.
+  - Header and photo grid replaced by a honeycomb gallery of regular pointy-top hexagons in three
+    sizes, all edges parallel: lateral cells R 215 (run past the page edges), diagonal cells
+    R 130, centre R 172.5 = the mean of the two, so every lateral/diagonal gap is exactly 12 px.
+    The centre holds the whole entrance with the facade sign. No outline-only cells. The top
+    row runs past the top trim by design; the flipped corner wedge shows top right.
   - Title "اتعرّف على عيادتنا" and the old divider removed.
   - Section title now "رعاية دقيقة بالتقنيات الحديثة" (set 9.5% smaller to clear the sparkles).
   - Photos are the clinic's own (originals in photos-src/): centre entrance + sign, top-left

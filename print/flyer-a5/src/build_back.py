@@ -22,26 +22,27 @@ HEAD_W = 675.0                                    # headline ink width at the en
 GRID_TOP = {'band': 180.0, 'band2': 180.0, 'shift': 184.0}.get(HDR, 224.0)   # photo grid top
 TOP_H = 202.0 if HDR in ('left', 'center') else round((609 - GRID_TOP - 14) / 2, 1)   # top-row photo height
 
-# ---- honeycomb gallery (v5+): pointy-top regular hexagons. A larger centre cell holds the entrance
-# with its sign; six equal cells sit around it, each parallel to the centre's facing edge at HC_GAP.
-# Outline-only cells carry the pattern to the page edges. Reference px; the top row may run past
-# the top trim.
-HC_RC = 160.0                                    # centre circumradius
-HC_RS = 132.0                                    # ring circumradius (all six identical)
-HC_GAP = 12.0                                    # white gap between facing edges
+# ---- honeycomb gallery (v5+): pointy-top regular hexagons, all the same orientation, so every pair of
+# facing edges is parallel. Three sizes: the two lateral cells (left/right) are the largest and run past
+# the page edges, the four diagonal cells are the smallest, and the centre sits between them,
+# HC_RC = (HC_RL + HC_RS) / 2, which makes the gap between every lateral and diagonal cell exactly HC_GAP.
+# Reference px; the top row runs past the top trim.
+import math
+HC_RL = 215.0                                    # lateral cells (left, right)
+HC_RS = 130.0                                    # diagonal cells (four)
+HC_RC = (HC_RL + HC_RS) / 2                      # centre, entrance
+HC_GAP = 12.0
 HC_CX, HC_BOTTOM = 527.0, 660.0
-HC_D = 3 ** 0.5 / 2 * (HC_RC + HC_RS) + HC_GAP   # centre-to-ring-cell distance
-HC_DY = HC_D * 3 ** 0.5 / 2                      # row pitch
-HC_CY = HC_BOTTOM - HC_RS - HC_DY                # centre row
-HC_DS = 3 ** 0.5 * HC_RS + HC_GAP                # ring-cell to outer-cell distance (same row)
-# (x, y, radius, photo asset or None for an outline-only cell)
-_ring = {'tl': (-.5, -1), 'tr': (.5, -1), 'l': (-1, 0), 'r': (1, 0), 'bl': (-.5, 1), 'br': (.5, 1)}
-_pos = {k: (HC_CX + dx * HC_D, HC_CY + row * HC_DY) for k, (dx, row) in _ring.items()}
+_ap = lambda r: r * 3 ** 0.5 / 2                 # apothem (centre to edge)
+_dist = lambda r: _ap(HC_RC) + _ap(r) + HC_GAP   # centre-to-neighbour distance
+HC_CY = HC_BOTTOM - HC_RS - _dist(HC_RS) * 3 ** 0.5 / 2
+# neighbour direction (deg, screen axes, y down) -> (radius, photo)
+_ring = [(240, HC_RS, 'hx_reception'), (300, HC_RS, 'hx_treatment'),
+         (180, HC_RL, 'hx_doctor'), (0, HC_RL, 'hx_equipment'),
+         (120, HC_RS, 'hx_waiting'), (60, HC_RS, 'hx_sterilisation')]
 HC_CELLS = [(HC_CX, HC_CY, HC_RC, 'hx_entrance')] + [
-    (*_pos[k], HC_RS, a) for k, a in (('tl', 'hx_reception'), ('tr', 'hx_treatment'), ('l', 'hx_doctor'),
-                                      ('r', 'hx_equipment'), ('bl', 'hx_waiting'), ('br', 'hx_sterilisation'))] + [
-    (_pos[k][0] + sgn * HC_DS, _pos[k][1], HC_RS, None)
-    for k, sgn in (('tl', -1), ('tr', 1), ('l', -1), ('r', 1), ('bl', -1), ('br', 1))]
+    (HC_CX + _dist(r) * math.cos(math.radians(a)), HC_CY + _dist(r) * math.sin(math.radians(a)), r, n)
+    for a, r, n in _ring]
 
 FS = json.load(open(ROOT / 'fs.json'))
 OFF = json.load(open(ROOT / 'off.json')) if (ROOT / 'off.json').exists() else {}
