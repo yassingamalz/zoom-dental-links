@@ -36,7 +36,8 @@ HC_CELLS = [(0, 0, 'hx_entrance'),
             (-1, 0, 'hx_doctor'), (1, 0, 'hx_equipment'),
             (-.5, 1, 'hx_waiting'), (.5, 1, 'hx_sterilisation'),
             # decorative cells that carry the pattern out to the page edges
-            (-1.5, -1, None), (1.5, -1, None), (-2, 0, None), (2, 0, None), (-1.5, 1, None), (1.5, 1, None)]
+            (-1.5, -1, 'hx_lounge'), (-1.5, 1, 'hx_office'), (1.5, 1, 'hx_sign'),
+            (1.5, -1, None), (-2, 0, None), (2, 0, None)]   # top-right stays open over the corner wedge
 
 FS = json.load(open(ROOT / 'fs.json'))
 OFF = json.load(open(ROOT / 'off.json')) if (ROOT / 'off.json').exists() else {}

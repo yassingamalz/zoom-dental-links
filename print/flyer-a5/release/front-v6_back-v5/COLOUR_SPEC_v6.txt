@@ -99,4 +99,7 @@ BACK v5 (proof, 2026-11-03)
   - Honeycomb photos are the clinic's own photos (originals in photos-src/), square crops:
     centre entrance (exterior), top-left reception, top-right treatment room, left hallway,
     right treatment room detail, bottom-left waiting area, bottom-right sterilisation.
+    Outer ring: top-left TV lounge, bottom-left office, bottom-right the facade sign with
+    logo and numbers (padded on top in the sign's dark tone so the lettering clears the
+    hexagon point). Top-right and the two edge cells stay outline-only over the wedge.
     Still placeholders: intraoral scanner photo (ph_scan.png), map, QR.
