@@ -38,6 +38,9 @@ HC_D = 3 ** 0.5 * HC_R + HC_GAP                  # centre-to-centre, same row
 HC_DY = HC_D * 3 ** 0.5 / 2                      # row pitch
 HC_CY = HC_BOTTOM - HC_R - HC_DY
 TINT, TINT2 = '#D7E9EC', '#0A7183'
+# HC_FILL: 'tint' = empty side cells in light teal (v12 look); 'white' = empty side cells white with a
+# thin teal outline like the photo cells. The teal cells (one with the logo) stay teal in both.
+HC_FILL = os.environ.get('HC_FILL', 'tint')
 
 
 def _cell(col, row):
@@ -243,7 +246,7 @@ def build(bleed_mm=0.0, marks_mm=0.0):
         P.append(f"<div style='{box(x - 1, 843, 2, 140)}background:{TEAL};opacity:.45'></div>")
     P.append(f"<div style='{box(709, 663, 308, 324)}border-radius:22px 22px 56px 22px;overflow:hidden;"
              f"background:url({png('ph_scan.png')}) center/cover no-repeat'></div>")
-    P.append(tag(723, 675))
+    # scanner photo is final (v13): no placeholder tag
 
     # --- location band (front wave shape), spans the full sheet incl. bleed
     wpts = [(x / REFW * PW, Y(y)) for x, y in WAVE]
@@ -327,6 +330,9 @@ def honeycomb(OX, OY, PW, PH):
     mark_w = b64(A / 'zoom-logo-mark-white.svg', 'image/svg+xml')
     for i, (cx, cy, R, kind) in enumerate(HC_CELLS):
         if kind in ('tint', 'teal', 'teal-logo'):
+            if kind == 'tint' and HC_FILL == 'white':
+                out.append(f"<polygon points='{hex_pts(cx, cy, R - 1.5)}' fill='#fff' stroke='{TEAL}' stroke-width='3'/>")
+                continue
             fill = TINT if kind == 'tint' else TINT2
             out.append(f"<polygon points='{hex_pts(cx, cy, R)}' fill='{fill}'/>")
             if kind == 'teal-logo':

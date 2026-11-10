@@ -8,17 +8,17 @@ Everything here rebuilds from source with one command.
 | Side | Version | Status |
 |---|---|---|
 | Front | v6 | **Press-ready.** Doctors' 12-line services list (7.0 pt), social row (Instagram, Facebook, TikTok, @handle) |
-| Back | v12 | **Proof only.** Honeycomb gallery; route map: Google Maps geometry + every landmark from the hand sketch, original map style, labels enlarged and de-overlapped; photos and QR still to confirm |
+| Back | v13 / v13-white | **Proof only.** Honeycomb gallery; route map: Google Maps geometry + every landmark from the hand sketch, original map style, labels enlarged and de-overlapped; photos and QR still to confirm |
 
-Final files: `release/front-v6_back-v12/` (previous: `release/front-v6_back-v11/`, `release/front-v6_back-v10/`, `release/front-v6_back-v9/`, `release/front-v6_back-v8/`, `release/front-v6_back-v7/`, `release/front-v6_back-v6/`, `release/front-v6_back-v5/`, `release/front-v5_back-v4/`)
+Final files: `release/front-v6_back-v13/` (previous: `release/front-v6_back-v12/`, `release/front-v6_back-v11/`, `release/front-v6_back-v10/`, `release/front-v6_back-v9/`, `release/front-v6_back-v8/`, `release/front-v6_back-v7/`, `release/front-v6_back-v6/`, `release/front-v6_back-v5/`, `release/front-v5_back-v4/`)
 
 | File | Use |
 |---|---|
 | `ZoomDental_Flyer_A5_v6_PRESS_cropmarks_CMYK.pdf` | front, send to the printer |
 | `ZoomDental_Flyer_A5_v6_bleed_CMYK.pdf` | front, bleed only |
 | `ZoomDental_Flyer_A5_v6_plain.pdf` / `_300dpi.png` | front, screen proof |
-| `ZoomDental_Flyer_A5_BACK_v12_PROOF.pdf` / `_300dpi.png` | back, approval proof, not for print |
-| `Zoom_Dental_Flyer_A5_Front_Back.pdf` | both sides, for WhatsApp approval |
+| `ZoomDental_Flyer_A5_BACK_v13_PROOF.pdf`, `..._v13-white_PROOF.pdf` / `_300dpi.png` | back, two honeycomb variants, approval proof |
+| `Zoom_Dental_Flyer_A5_Front_Back_v13.pdf`, `..._v13-white.pdf` | both sides, for WhatsApp approval |
 | `COLOUR_SPEC_v6.txt` | printer spec and change log |
 
 ## Layout
@@ -65,16 +65,18 @@ fonts embedded, ink TAC under 300%, crop marks K100 only, QR decodes to
 - **Phone numbers, handle, address:** `src/footer_parts.py`. Changes both sides.
 - **Back text:** in `src/build_back.py`. After moving or resizing text, run `python3 align.py`
   then `python3 align_icons.py` so icons stay centred on their text.
+- **Honeycomb empty cells:** `HC_FILL=tint` (light teal, default) or `HC_FILL=white`, e.g.
+  `HC_FILL=white python3 build_all.py --back-version v13-white`.
 - **Back header layout:** `HDR` in `build_back.py` (`shift` = approved white header).
 
 ## Finishing the back
 
 Two things stop the back from going to print:
 
-1. **Photos:** replace the honeycomb photos in `src/assets/` with real clinic photos, same file
+1. **Photos:** the scanner photo (`ph_scan.png`) is approved as is. Replace the honeycomb photos in `src/assets/` with real clinic photos, same file
    names, square, at least 1200 × 1200 px: `hx_entrance.jpg` (centre), `hx_reception.jpg`,
    `hx_treatment.jpg`, `hx_doctor.jpg`, `hx_equipment.jpg`, `hx_waiting.jpg`,
-   `hx_sterilisation.jpg`, plus `ph_scan.png` (intraoral scanner). The current ones are AI images.
+   `hx_sterilisation.jpg`.
 2. **QR:** needs the clinic's Google Maps share link. Replace the placeholder box in
    `build_back.py` (search "QR<br>Google Maps") with the generated QR, then add `qr_expect` to the
    back `verify` call in `build_all.py`.
@@ -86,7 +88,7 @@ Schematic, not to scale. After moving a label, run `python3 check_map_labels.py`
 tall line box makes it flag near-misses too, so confirm on the render).
 
 Then set `TAGS=0` (removes the PLACEHOLDER labels) and run
-`python3 build_all.py --back-press --back-version v13`.
+`python3 build_all.py --back-press --back-version v14`.
 
 ## Versioning
 
@@ -105,3 +107,4 @@ spec, commit, and tag `flyer-a5/front-vX_back-vY`.
 | `flyer-a5/front-v6_back-v10` | v6 | v10 | map geometry from Google Maps, landmarks from the sketch |
 | `flyer-a5/front-v6_back-v11` | v6 | v11 | map labels larger, horizontal, no overlaps |
 | `flyer-a5/front-v6_back-v12` | v6 | v12 | mall label مول 50, mall corner cleaned up |
+| `flyer-a5/front-v6_back-v13` | v6 | v13, v13-white | scanner photo final (tag removed); honeycomb empty cells light teal or white |
