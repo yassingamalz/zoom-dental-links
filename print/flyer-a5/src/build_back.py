@@ -258,7 +258,6 @@ def build(bleed_mm=0.0, marks_mm=0.0):
     # map card — schematic placeholder until the real location is drawn
     P.append(f"<div style='{box(51, 1095, 476, 216)}background:#fff;border-radius:18px;overflow:hidden'>"
              f"{map_svg()}</div>")
-    P.append(tag(372, 1105, 'MAP PLACEHOLDER'))
 
     P.append(f"<div style='{box(545, 1067, 2, 243)}background:#fff;opacity:.55'></div>")
 
@@ -350,48 +349,72 @@ def honeycomb(OX, OY, PW, PH):
 
 
 def map_svg():
-    """Schematic map in draft 1's structure: tinted blocks with white streets, teal main
-    road, dashed route ending at a teal pin with the white mark. Placeholder geometry."""
-    t = 'rgba(10,113,131,'
+    """Route map drawn from the clinic's hand sketch (two sheets, Nov 2026).
+
+    One main street, ش عبد الرسول, runs across the card. Its west end comes down from
+    the Autostrad along ش الزهراء; its east end meets the road between Carrefour
+    El-Daery and El-Haramain mall. The clinic sits on the south side, opposite
+    ماركت الفتح, just west of where سور الجيش begins. Two dashed routes, one from
+    each end, lead to the pin. Schematic, not to scale; no north arrow (the sketch has none).
+    """
     MARK_W = b64(A / 'zoom-logo-mark-white.svg', 'image/svg+xml')
-    streets = ''.join(f"<path d='{d}'/>" for d in [
-        'M -10 150 L 486 68', 'M -10 214 L 486 132',
-        'M 70 0 L 92 216', 'M 150 36 L 168 216', 'M 246 20 L 256 216',
-        'M 336 0 L 350 216', 'M 420 0 L 438 216', 'M -10 168 L 300 232',
-        'M 20 0 L 40 216', 'M 196 30 L 210 216', 'M 292 10 L 304 216', 'M 380 0 L 392 216',
-        'M -10 120 L 120 98', 'M 300 112 L 486 82', 'M 240 186 L 486 160'])
-    parks = (f"<rect x='340' y='128' width='50' height='46' rx='4' fill='#C4DDE1'/>"
-             f"<rect x='428' y='62' width='44' height='30' rx='4' fill='#C4DDE1'/>"
-             f"<rect x='12' y='136' width='34' height='20' rx='4' fill='#C4DDE1'/>")
-    pin_cx, pin_cy, R, tip = 282, 92, 32, 156
-    k = (tip - pin_cy) / R
-    pin = (f"M {pin_cx} {tip} C {pin_cx - .38*R:.1f} {pin_cy + (k - .55)*R:.1f} {pin_cx - R} {pin_cy + .8*R:.1f} "
-           f"{pin_cx - R} {pin_cy} A {R} {R} 0 0 1 {pin_cx + R} {pin_cy} "
-           f"C {pin_cx + R} {pin_cy + .8*R:.1f} {pin_cx + .38*R:.1f} {pin_cy + (k - .55)*R:.1f} {pin_cx} {tip} Z")
-    lab = f"font-family='Cairo' font-weight='800' font-size='15' fill='{TEAL}' text-anchor='middle'"
+    T = TEAL
+    lab = f"font-family='Cairo' font-weight='700' fill='{T}' text-anchor='middle'"
+
+    def L(x, y, t, fs=12, extra=''):
+        return f"<text x='{x}' y='{y}' {lab} font-size='{fs}' {extra}>{t}</text>"
+
+    def pill(x, y, t, w, fs=11.5):
+        return (f"<rect x='{x - w/2}' y='{y - 11}' width='{w}' height='20' rx='10' fill='#fff' "
+                f"stroke='{T}' stroke-width='1.6'/>" + L(x, y + 4, t, fs))
+
+    # pin: tip on the clinic's frontage (south side of the street)
+    px, py, R, tip = 222, 94, 26, 147
+    k = (tip - py) / R
+    pin = (f"M {px} {tip} C {px - .38*R:.1f} {py + (k - .55)*R:.1f} {px - R} {py + .8*R:.1f} "
+           f"{px - R} {py} A {R} {R} 0 0 1 {px + R} {py} "
+           f"C {px + R} {py + .8*R:.1f} {px + .38*R:.1f} {py + (k - .55)*R:.1f} {px} {tip} Z")
+
+    route = f"fill='none' stroke='{T}' stroke-width='3.4' stroke-dasharray='9 6' stroke-linecap='round' stroke-linejoin='round'"
     return (f"<svg viewBox='0 0 476 216' width='476' height='216' style='display:block'>"
             f"<rect width='476' height='216' fill='#DFECEE'/>"
-            f"<g stroke='#fff' stroke-width='9' stroke-linecap='round' fill='none'>{streets}</g>"
-            f"{parks}"
-            f"<path d='M -10 72 L 486 -10 L 486 14 L -10 96 Z' fill='{TEAL}'/>"
-            f"<text x='222' y='46' font-family='Cairo' font-weight='800' font-size='17' fill='#fff' "
-            f"text-anchor='middle' transform='rotate(-9.4 222 46)'>الطريق الرئيسي</text>"
-            f"<path d='M 110 66 L 82 71 M 82 71 L 89 65.5 M 82 71 L 90 75' stroke='#fff' stroke-width='2.4' "
-            f"fill='none' stroke-linecap='round' stroke-linejoin='round'/>"
-            f"<path d='M 199 60 L 195 67 L 161 76 L 185 140 L 228 124 L 280 182 L 296 176 L 291 160' "
-            f"fill='none' stroke='{TEAL}' stroke-width='4.2' stroke-dasharray='11 7' stroke-linejoin='round'/>"
-            f"<path d='{pin}' fill='{TEAL}'/>"
-            f"<image href='{MARK_W}' x='{pin_cx - 32}' y='{pin_cy - 32}' width='64' height='64'/>"
-            f"<path d='M 26 12 L 34 33 L 26 28 L 18 33 Z' fill='{TEAL}'/>"
-            f"<text x='26' y='52' font-family='Mont' font-weight='600' font-size='14' fill='{TEAL}' text-anchor='middle'>N</text>"
-            f"<g transform='translate(78,116)' stroke='{TEAL}' stroke-width='2.6' fill='none' "
-            f"stroke-linejoin='round' stroke-linecap='round'>"
-            f"<rect x='-13' y='-6' width='26' height='24' rx='3'/><path d='M -6 -6 C -6 -16 6 -16 6 -6'/>"
-            f"<path d='M -5 5 C -2 9 2 9 5 5'/></g>"
-            f"<text x='78' y='160' {lab}>منطقة قريبة</text>"
-            f"<text x='78' y='181' {lab}>معروفة</text>"
-            f"<text x='190' y='198' {lab} transform='rotate(9 190 198)'>المعراج السفلي</text>"
-            f"<text x='372' y='202' {lab}>المجاورة السابعة</text>"
+            # streets (white)
+            f"<g fill='none' stroke='#fff' stroke-linecap='butt' stroke-linejoin='round'>"
+            f"<path d='M 43 18 L 43 98 Q 43 121 66 121 L 438 121' stroke-width='26'/>"   # ش الزهراء + ش عبد الرسول
+            f"<path d='M 438 -4 L 438 220' stroke-width='22'/>"                          # Carrefour - mall road
+            f"<path d='M 318 -4 L 318 110' stroke-width='12'/>"                          # ش الإسراء
+            f"</g>"
+            # Autostrad (teal band, top-left)
+            f"<rect x='-4' y='0' width='214' height='20' fill='{T}'/>"
+            f"<text x='128' y='15' font-family='Cairo' font-weight='800' font-size='13' fill='#fff' text-anchor='middle'>الأوتوستراد</text>"
+            # army wall
+            f"<rect x='262' y='141' width='160' height='7' rx='2' fill='#9CC4CB'/>"
+            # landmarks
+            + L(84, 38, 'بنزينة', 11) +
+            f"<rect x='78' y='50' width='78' height='26' rx='5' fill='#fff' stroke='{T}' stroke-width='1.6'/>"
+            + L(117, 68, 'مسجد الزهراء', 11.5) +
+            L(64, 64, 'ش الزهراء', 11, "transform='rotate(-90 64 64)'") +
+            L(96, 160, 'ماركت المصطفى', 11.5) +
+            L(160, 100, 'ماركت الفتح', 12.5) +
+            f"<rect x='336' y='38' width='76' height='26' rx='5' fill='#fff' stroke='{T}' stroke-width='1.6'/>"
+            + L(374, 56, 'مسجد المعراج', 11.5) +
+            L(304, 60, 'ش الإسراء', 10.5, "transform='rotate(-90 304 60)'") +
+            L(385, 99, 'كنتاكي ومؤمن', 11.5) +
+            L(310, 166, 'سور الجيش', 11.5) +
+            L(390, 168, 'النصر للملابس', 11) +
+            pill(376, 16, 'كارفور الدائري', 84) +
+            pill(380, 204, 'مول الحرمين', 74) +
+            # street name, above the route line
+            L(300, 120, 'ش عبد الرسول', 12.5, "fill-opacity='.9'") +
+            # routes: from the Autostrad (west) and from Carrefour (east)
+            f"<path d='M 43 24 L 43 98 Q 43 128 70 128 L 196 128' {route}/>"
+            f"<path d='M 196 128 l -7 -4.5 l 0 9 Z' fill='{T}'/>"
+            f"<path d='M 438 30 L 438 116 Q 438 128 426 128 L 250 128' {route}/>"
+            f"<path d='M 248 128 l 7 -4.5 l 0 9 Z' fill='{T}'/>"
+            # clinic pin
+            f"<path d='{pin}' fill='{T}'/>"
+            f"<image href='{MARK_W}' x='{px - 24}' y='{py - 24}' width='48' height='48'/>"
+            + L(222, 172, 'عيادة زووم', 13.5, "font-weight='800'") +
             f"</svg>")
 
 

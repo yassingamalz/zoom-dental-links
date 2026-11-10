@@ -30,7 +30,7 @@ def pdf(html, dst, w, h):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--front-version', default='v6')
-    ap.add_argument('--back-version', default='v5')
+    ap.add_argument('--back-version', default='v6')
     ap.add_argument('--back-press', action='store_true')
     a = ap.parse_args()
     OUT.mkdir(exist_ok=True)
@@ -65,7 +65,7 @@ def main():
     else:
         back_plain = OUT / f'{bstem}_PROOF.pdf'
         pdf(ROOT / 'back_plain.html', back_plain, *TRIM)
-        print('\nBACK proof only:', back_plain.name, '(placeholders: photos, map, QR)')
+        print('\nBACK proof only:', back_plain.name, '(still to confirm: photos, Maps QR)')
 
     # ---- 2-page approval PDF -------------------------------------------------------------
     from pypdf import PdfWriter
