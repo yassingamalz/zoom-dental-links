@@ -355,104 +355,104 @@ def map_svg():
     Content: the clinic's hand sketch (reference/map_hand_sketch_clinic.jpg), every road and
     landmark it names. Geometry: Google Maps (reference/google_maps_*.jpg). ش عبد الرسول runs
     in from the west and the clinic sits at its bend; east of the clinic the street turns
-    south-east (Google: ش د. أشرف البدري) towards the east road between كارفور الدائري and
-    مول الخمسين (Hub 50 Mall). Schematic, not to scale.
+    south-east towards the east road between كارفور الدائري and مول الخمسين (Hub 50 Mall).
+    Schematic, not to scale.
+
+    v11: every label horizontal (street names follow their street), larger type
+    (landmarks 12.5-13 px = 5 pt, streets 14 px), a halo in the map tint behind each label,
+    and positions checked for overlaps with check_map_labels.py.
     """
-    import math
     MARK_W = b64(A / 'zoom-logo-mark-white.svg', 'image/svg+xml')
-    T = TEAL
-    W0, BEND, E0 = (44, 128), (220, 118), (440, 190)      # main street: west end, clinic bend, east road
-    XL, XR = 44, 440
-    HW = 13                                                # half width of the main street
+    T, BG = TEAL, '#DFECEE'
+    W0, BEND, E0 = (44, 128), (220, 118), (456, 198)      # main street: west end, clinic bend, east road
+    XL, XR, HW = 44, 456, 13
+    import math
 
     def on(p, q, f, off=0.0):
-        """Point at fraction f along p->q, pushed `off` px to the left of the direction (north)."""
         dx, dy = q[0] - p[0], q[1] - p[1]; L = math.hypot(dx, dy)
         return p[0] + dx * f + dy / L * off, p[1] + dy * f - dx / L * off
 
     def ang(p, q):
         return math.degrees(math.atan2(q[1] - p[1], q[0] - p[0]))
 
-    def t(x, y, s, fs=11, w=700, col=None, rot=0.0):
+    def t(x, y, s, fs=12.5, w=700, col=None, rot=0.0, halo=True):
         r = f" transform='rotate({rot:.1f} {x:.1f} {y:.1f})'" if rot else ''
-        return (f"<text x='{x:.1f}' y='{y:.1f}' font-family='Cairo' font-weight='{w}' font-size='{fs}' "
-                f"fill='{col or T}' text-anchor='middle'{r}>{s}</text>")
+        h = f" stroke='{BG}' stroke-width='3.2' stroke-linejoin='round' paint-order='stroke'" if halo else ''
+        return (f"<text class='lb' x='{x:.1f}' y='{y:.1f}' font-family='Cairo' font-weight='{w}' font-size='{fs}' "
+                f"fill='{col or T}' text-anchor='middle'{h}{r}>{s}</text>")
 
-    def along(p, q, f, off, s, fs=11, w=700, col=None):
-        x, y = on(p, q, f, off)
-        return t(x, y + fs * 0.35, s, fs, w, col, ang(p, q))
+    def along(p, q, f, s, fs=13.5):
+        x, y = on(p, q, f, -3)                              # south half; the route dashes run on the north half
+        return t(x, y + fs * 0.36, s, fs, 800, '#fff', ang(p, q), halo=False)
 
-    def box(x, y, w, h, s, fs=10.5):
-        return (f"<rect x='{x - w/2}' y='{y - h/2}' width='{w}' height='{h}' rx='4' fill='#fff' "
-                f"stroke='{T}' stroke-width='1.4'/>" + t(x, y + 3.8, s, fs))
+    def box(x, y, w, s, fs=12):
+        return (f"<g class='lb'><rect x='{x - w/2}' y='{y - 10}' width='{w}' height='20' rx='4' fill='#fff' "
+                f"stroke='{T}' stroke-width='1.4'/>" + t(x, y + 4.3, s, fs, halo=False) + "</g>")
 
-    def pillv(x, y, w, s):
-        return (f"<rect x='{x - w/2}' y='{y - 9}' width='{w}' height='18' rx='9' fill='#fff' "
-                f"stroke='{T}' stroke-width='1.4'/>" + t(x, y + 3.8, s, 10.5))
+    def pill(x, y, w, s, fs=12):
+        return (f"<g class='lb'><rect x='{x - w/2}' y='{y - 9.5}' width='{w}' height='19' rx='9.5' fill='#fff' "
+                f"stroke='{T}' stroke-width='1.4'/>" + t(x, y + 4.3, s, fs, halo=False) + "</g>")
 
     grid = ''.join(f"<path d='{d}'/>" for d in [
-        'M 96 24 L 100 112', 'M 160 34 L 164 108', 'M 120 140 L 112 216', 'M 186 136 L 176 216',
-        'M 250 20 L 262 120', 'M 312 22 L 330 140', 'M 70 196 L 260 186', 'M 230 160 L 300 216',
-        'M 300 216 L 360 150'])
-    pin_tip = on(W0, BEND, 1.0, -HW + 1)
-    px, R = pin_tip[0], 24
-    py = pin_tip[1] - 56
-    tip = pin_tip[1]
-    k = (tip - py) / R
-    pin = (f"M {px:.1f} {tip:.1f} C {px - .38*R:.1f} {py + (k - .55)*R:.1f} {px - R:.1f} {py + .8*R:.1f} "
+        'M 176 30 L 180 104', 'M 120 144 L 114 216', 'M 196 150 L 190 216',
+        'M 252 24 L 258 100', 'M 70 206 L 240 200', 'M 340 30 L 348 76'])
+    tip = on(W0, BEND, 1.0, -HW + 1)
+    px, R = tip[0], 24
+    py, ty = tip[1] - 56, tip[1]
+    k = (ty - py) / R
+    pin = (f"M {px:.1f} {ty:.1f} C {px - .38*R:.1f} {py + (k - .55)*R:.1f} {px - R:.1f} {py + .8*R:.1f} "
            f"{px - R:.1f} {py:.1f} A {R} {R} 0 0 1 {px + R:.1f} {py:.1f} "
-           f"C {px + R:.1f} {py + .8*R:.1f} {px + .38*R:.1f} {py + (k - .55)*R:.1f} {px:.1f} {tip:.1f} Z")
-    dash = "fill='none' stroke-width='3' stroke-dasharray='8 6' stroke-linecap='round' stroke-linejoin='round'"
-    a1 = on(W0, BEND, 0.05, 7); a2 = on(W0, BEND, 0.80, 7)
-    b1 = on(BEND, E0, 0.95, 7); b2 = on(BEND, E0, 0.22, 7)
-    wall0, wall1 = on(BEND, E0, 0.20, -HW - 6), on(BEND, E0, 0.80, -HW - 6)
+           f"C {px + R:.1f} {py + .8*R:.1f} {px + .38*R:.1f} {py + (k - .55)*R:.1f} {px:.1f} {ty:.1f} Z")
+    dash = "fill='none' stroke-width='2.6' stroke-dasharray='8 6' stroke-linecap='round' stroke-linejoin='round'"
+    a1, a2 = on(W0, BEND, 0.05, 9.5), on(W0, BEND, 0.80, 9.5)
+    b1, b2 = on(BEND, E0, 0.96, 9.5), on(BEND, E0, 0.22, 9.5)
+    w0, w1 = on(BEND, E0, 0.16, -HW - 6), on(BEND, E0, 0.62, -HW - 6)
+    isr = on(BEND, E0, 0.76, HW)                            # ش الإسراء meets the main street here
 
     return (f"<svg viewBox='0 0 476 216' width='476' height='216' style='display:block'>"
-            f"<rect width='476' height='216' fill='#DFECEE'/>"
+            f"<rect width='476' height='216' fill='{BG}'/>"
             f"<g stroke='#fff' stroke-width='7' stroke-linecap='round' fill='none'>{grid}</g>"
-            f"<rect x='60' y='186' width='40' height='22' rx='3' fill='#C4DDE1'/>"
-            # west road ش الزهراء, east road (Carrefour - mall), ش الإسراء
+            f"<rect x='60' y='178' width='40' height='22' rx='3' fill='#C4DDE1'/>"
+            # side roads: ش الزهراء (west), east road (Carrefour - mall), ش الإسراء
             f"<path d='M {XL} 14 L {XL} {W0[1] - 16} Q {XL} {W0[1]} {XL + 14} {W0[1]}' stroke='#fff' stroke-width='18' fill='none'/>"
             f"<path d='M {XR} -4 L {XR} 220' stroke='#fff' stroke-width='18'/>"
-            f"<path d='M 380 26 L 398 {on(BEND, E0, 0.81)[1] - 8:.1f}' stroke='#fff' stroke-width='10'/>"
+            f"<path d='M {isr[0] - 6:.1f} 22 L {isr[0]:.1f} {isr[1]:.1f}' stroke='#fff' stroke-width='11'/>"
             # Autostrad and the main street (teal)
-            f"<rect x='-4' y='0' width='206' height='18' fill='{T}'/>"
-            + t(124, 13.5, 'الأوتوستراد', 12.5, 800, '#fff') +
-            f"<path d='M {W0[0] + 8} {W0[1]} L {BEND[0]} {BEND[1]} L {E0[0] + 10} {E0[1] + 3.3}' stroke='{T}' "
+            f"<rect x='-4' y='0' width='214' height='20' fill='{T}'/>"
+            + t(124, 15, 'الأوتوستراد', 14, 800, '#fff', halo=False) +
+            f"<path d='M {W0[0] + 8} {W0[1]} L {BEND[0]} {BEND[1]} L {E0[0] + 12} {E0[1] + 4}' stroke='{T}' "
             f"stroke-width='{2*HW}' fill='none' stroke-linejoin='round'/>"
-            + along(W0, BEND, 0.42, -4, 'ش عبد الرسول', 11.5, 800, '#fff')
-            + along(BEND, E0, 0.55, -4, 'ش عبد الرسول', 11.5, 800, '#fff') +
-            # routes (white dashes along the north half of the street, teal down the side roads)
-            f"<path d='M {XL} 22 L {XL} {W0[1] - 18}' stroke='{T}' {dash}/>"
+            + along(W0, BEND, 0.42, 'ش عبد الرسول') + along(BEND, E0, 0.60, 'ش عبد الرسول') +
+            # routes
+            f"<path d='M {XL} 26 L {XL} {W0[1] - 18}' stroke='{T}' {dash}/>"
             f"<path d='M {XR} 30 L {XR} {E0[1] - 18}' stroke='{T}' {dash}/>"
             f"<path d='M {a1[0]:.1f} {a1[1]:.1f} L {a2[0]:.1f} {a2[1]:.1f}' stroke='#fff' {dash}/>"
             f"<path d='M {b1[0]:.1f} {b1[1]:.1f} L {b2[0]:.1f} {b2[1]:.1f}' stroke='#fff' {dash}/>"
-            # army wall on the south side of the east part
-            f"<path d='M {wall0[0]:.1f} {wall0[1]:.1f} L {wall1[0]:.1f} {wall1[1]:.1f}' stroke='#9CC4CB' stroke-width='6' stroke-linecap='round'/>"
-            # west landmarks
-            + t(84, 31, 'بنزينة', 10.5)
-            + t(20, 62, 'التوحيد والنور', 10, 700, None, -90)
-            + box(20, 104, 30, 15, 'مسجد', 9.5)
-            + t(60, 70, 'ش الزهراء', 10, 700, None, -90)
-            + box(130, 60, 66, 18, 'مسجد الزهراء')
-            + t(104, 108, 'هايبر إلكتريك', 10.5)
-            + t(96, 158, 'ماركت المصطفى', 10.5) + t(156, 176, 'صيدلية سلام', 10.5)
-            # north side of the east part, along the street
-            + along(BEND, E0, 0.17, 22, 'ماركت الفتح', 10.5)
-            + along(BEND, E0, 0.40, 36, 'أسواق عرفة', 10.5)
-            + along(BEND, E0, 0.48, 20, 'ماركت الربيع', 10.5)
-            + along(BEND, E0, 0.62, 40, 'صيدلية', 10.5)
-            + box(312, 50, 62, 18, 'مسجد المعراج')
-            + t(392, 62, 'ش الإسراء', 9.5, 700, None, -83)
-            + t(415, 128, 'كنتاكي', 10) + t(415, 141, 'ومؤمن', 10)
-            # south side of the east part
-            + along(BEND, E0, 0.36, -34, 'سور الجيش', 10.5)
-            + along(BEND, E0, 0.70, -33, 'النصر للملابس', 10)
-            + pillv(428, 12, 76, 'كارفور الدائري') + pillv(440, 205, 66, 'مول الخمسين') +
+            f"<path d='M {w0[0]:.1f} {w0[1]:.1f} L {w1[0]:.1f} {w1[1]:.1f}' stroke='#9CC4CB' stroke-width='6' stroke-linecap='round'/>"
+            # west: Autostrad side
+            + t(88, 40, 'بنزينة')
+            + t(19, 60, 'التوحيد والنور', 11, rot=-90)
+            + box(19, 112, 34, 'مسجد', 11)
+            + t(63, 70, 'ش الزهراء', 12, rot=-90)
+            + box(128, 70, 84, 'مسجد الزهراء')
+            + t(126, 104, 'هايبر إلكتريك')
+            + t(96, 164, 'ماركت المصطفى') + t(150, 192, 'صيدلية سلام')
+            # north of the east part
+            + t(291, 116, 'ماركت الفتح')
+            + t(300, 92, 'أسواق عرفة')
+            + box(318, 48, 84, 'مسجد المعراج')
+            + t(348, 140, 'ماركت الربيع')
+            + t(356, 112, 'صيدلية')
+            + t(isr[0] - 14, 76, 'ش الإسراء', 12, rot=-86)
+            + t(426, 134, 'كنتاكي') + t(426, 150, 'ومؤمن')
+            # south of the east part
+            + t(258, 188, 'سور الجيش')
+            + t(338, 205, 'النصر للملابس', 12)
+            + pill(426, 13, 86, 'كارفور الدائري') + pill(432, 200, 78, 'مول الخمسين') +
             # clinic, at the bend, south side
             f"<path d='{pin}' fill='{T}' stroke='#fff' stroke-width='2.6' stroke-linejoin='round'/>"
             f"<image href='{MARK_W}' x='{px - 20:.1f}' y='{py - 20:.1f}' width='40' height='40'/>"
-            + t(px, tip + 18, 'عيادة زووم', 12.5, 800) +
+            + t(px, ty + 20, 'عيادة زووم', 15, 800) +
             f"</svg>")
 
 
