@@ -8,17 +8,17 @@ Everything here rebuilds from source with one command.
 | Side | Version | Status |
 |---|---|---|
 | Front | v6 | **Press-ready.** Doctors' 12-line services list (7.0 pt), social row (Instagram, Facebook, TikTok, @handle) |
-| Back | v13 / v13-white | **Proof only.** Honeycomb gallery; route map: Google Maps geometry + every landmark from the hand sketch, original map style, labels enlarged and de-overlapped; photos and QR still to confirm |
+| Back | v14 / v14-white | **Proof only.** Honeycomb gallery; route map: Google Maps geometry + every landmark from the hand sketch, original map style, labels enlarged and de-overlapped; Google Maps QR in; honeycomb photos still to confirm |
 
-Final files: `release/front-v6_back-v13/` (previous: `release/front-v6_back-v12/`, `release/front-v6_back-v11/`, `release/front-v6_back-v10/`, `release/front-v6_back-v9/`, `release/front-v6_back-v8/`, `release/front-v6_back-v7/`, `release/front-v6_back-v6/`, `release/front-v6_back-v5/`, `release/front-v5_back-v4/`)
+Final files: `release/front-v6_back-v14/` (previous: `release/front-v6_back-v13/`, `release/front-v6_back-v12/`, `release/front-v6_back-v11/`, `release/front-v6_back-v10/`, `release/front-v6_back-v9/`, `release/front-v6_back-v8/`, `release/front-v6_back-v7/`, `release/front-v6_back-v6/`, `release/front-v6_back-v5/`, `release/front-v5_back-v4/`)
 
 | File | Use |
 |---|---|
 | `ZoomDental_Flyer_A5_v6_PRESS_cropmarks_CMYK.pdf` | front, send to the printer |
 | `ZoomDental_Flyer_A5_v6_bleed_CMYK.pdf` | front, bleed only |
 | `ZoomDental_Flyer_A5_v6_plain.pdf` / `_300dpi.png` | front, screen proof |
-| `ZoomDental_Flyer_A5_BACK_v13_PROOF.pdf`, `..._v13-white_PROOF.pdf` / `_300dpi.png` | back, two honeycomb variants, approval proof |
-| `Zoom_Dental_Flyer_A5_Front_Back_v13.pdf`, `..._v13-white.pdf` | both sides, for WhatsApp approval |
+| `ZoomDental_Flyer_A5_BACK_v14_PROOF.pdf`, `..._v14-white_PROOF.pdf` / `_300dpi.png` | back, two honeycomb variants, approval proof |
+| `Zoom_Dental_Flyer_A5_Front_Back_v14.pdf`, `..._v14-white.pdf` | both sides, for WhatsApp approval |
 | `COLOUR_SPEC_v6.txt` | printer spec and change log |
 
 ## Layout
@@ -71,15 +71,15 @@ fonts embedded, ink TAC under 300%, crop marks K100 only, QR decodes to
 
 ## Finishing the back
 
-Two things stop the back from going to print:
+One thing stops the back from going to print (the Google Maps QR is in since v14):
 
 1. **Photos:** the scanner photo (`ph_scan.png`) is approved as is. Replace the honeycomb photos in `src/assets/` with real clinic photos, same file
    names, square, at least 1200 × 1200 px: `hx_entrance.jpg` (centre), `hx_reception.jpg`,
    `hx_treatment.jpg`, `hx_doctor.jpg`, `hx_equipment.jpg`, `hx_waiting.jpg`,
    `hx_sterilisation.jpg`.
-2. **QR:** needs the clinic's Google Maps share link. Replace the placeholder box in
-   `build_back.py` (search "QR<br>Google Maps") with the generated QR, then add `qr_expect` to the
-   back `verify` call in `build_all.py`.
+
+**QR:** `QR_MAPS` in `build_back.py` opens the clinic on Google Maps (Place ID ChIJGwqoLuI5WBQRDiV81l6BqTM,
+same listing as the review stand). `build_all.py` decodes it on every build.
 
 The map (`map_svg()` in `build_back.py`) takes its geometry from Google Maps (`reference/google_maps_*.jpg`)
 and its landmarks from the clinic's hand sketch: ش عبد الرسول from the Autostrad side (via ش الزهراء), clinic
@@ -88,7 +88,7 @@ Schematic, not to scale. After moving a label, run `python3 check_map_labels.py`
 tall line box makes it flag near-misses too, so confirm on the render).
 
 Then set `TAGS=0` (removes the PLACEHOLDER labels) and run
-`python3 build_all.py --back-press --back-version v14`.
+`python3 build_all.py --back-press --back-version v15`.
 
 ## Versioning
 
@@ -108,3 +108,4 @@ spec, commit, and tag `flyer-a5/front-vX_back-vY`.
 | `flyer-a5/front-v6_back-v11` | v6 | v11 | map labels larger, horizontal, no overlaps |
 | `flyer-a5/front-v6_back-v12` | v6 | v12 | mall label مول 50, mall corner cleaned up |
 | `flyer-a5/front-v6_back-v13` | v6 | v13, v13-white | scanner photo final (tag removed); honeycomb empty cells light teal or white |
+| `flyer-a5/front-v6_back-v14` | v6 | v14, v14-white | Google Maps QR (same Place ID as the review stand) |

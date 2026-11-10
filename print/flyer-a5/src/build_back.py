@@ -60,6 +60,26 @@ HC_CELLS = [(*_cell(c, r), HC_R, k) for (c, r), k in _side.items()] + \
            [(*_cell(c, r), HC_R, k) for (c, r), k in _photos.items() if (c, r) != (0, 0)] + \
            [(*_cell(0, 0), HC_R * (1 if HC_STYLE == 'B' else HC_FEATURE), 'hx_entrance')]
 
+# ---- Google Maps QR (v14): the clinic's listing, same Place ID as the Google review stand
+# (Zoom Dental Clinic (maadi), CID 0x33a9815ed67c250e; review link
+#  https://search.google.com/local/writereview?placeid=ChIJGwqoLuI5WBQRDiV81l6BqTM).
+# This one opens the place on Maps (directions button), not the review form.
+QR_MAPS = 'https://www.google.com/maps/place/?q=place_id:ChIJGwqoLuI5WBQRDiV81l6BqTM'
+QR_SIZE = 140.0          # ref px = 19.7 mm; ECC M, version 5, 37 modules -> 0.53 mm per module
+QR_WINDOW = (606, 1134, 766, 1292)   # the white panel, for the decode check
+
+
+def qr_svg(url, size, col='#000'):
+    """QR as one vector path, black modules on the white panel (quiet zone = panel margin)."""
+    import segno
+    m = [list(r) for r in segno.make(url, error='m', micro=False).matrix]
+    n = len(m); u = size / n
+    d = ''.join(f'M{x * u:.3f} {y * u:.3f}h{u:.3f}v{u:.3f}h-{u:.3f}z'
+                for y, row in enumerate(m) for x, v in enumerate(row) if v)
+    return (f"<svg width='{size:.2f}' height='{size:.2f}' viewBox='0 0 {size:.2f} {size:.2f}' "
+            f"shape-rendering='crispEdges' style='display:block'><path d='{d}' fill='{col}'/></svg>")
+
+
 FS = json.load(open(ROOT / 'fs.json'))
 OFF = json.load(open(ROOT / 'off.json')) if (ROOT / 'off.json').exists() else {}
 
@@ -269,12 +289,8 @@ def build(bleed_mm=0.0, marks_mm=0.0):
              f"border-radius:20px;box-sizing:border-box'></div>")
     P.append(text('qr1', 686, 0, 'امسح الكود للوصول إلينا', 'Cairo', 600, FS['qr'], WHITE, 'c'))
     P.append(text('qr2', 686, 0, 'على Google Maps', 'Cairo', 600, FS['qr'], WHITE, 'c'))
-    P.append(f"<div style='{box(606, 1134, 160, 158)}background:#fff;border-radius:9px;"
-             f"display:flex;align-items:center;justify-content:center'>"
-             f"<div style='width:126px;height:126px;border:2px dashed {TEAL};border-radius:6px;"
-             f"display:flex;align-items:center;justify-content:center;text-align:center;"
-             f"font-family:Mont;font-weight:600;font-size:13px;line-height:18px;color:{TEAL}'>"
-             f"QR<br>Google Maps<br>link needed</div></div>")
+    P.append(f"<div style='{box(606, 1134, 160, 158)}background:#fff;border-radius:9px'></div>")
+    P.append(f"<div style='{box(686 - QR_SIZE / 2, 1213 - QR_SIZE / 2, QR_SIZE, QR_SIZE)}'>{qr_svg(QR_MAPS, QR_SIZE)}</div>")
 
     # right column (draft 1 structure): small pin + dot, dashed S-route, big pin, ticks, text, swoosh
     def pin_path(cx, top, tip, R):

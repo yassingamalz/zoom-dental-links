@@ -30,12 +30,13 @@ def pdf(html, dst, w, h):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--front-version', default='v6')
-    ap.add_argument('--back-version', default='v13')
+    ap.add_argument('--back-version', default='v14')
     ap.add_argument('--back-press', action='store_true')
     a = ap.parse_args()
     OUT.mkdir(exist_ok=True)
     from export_print import export_set, verify
     from front_v3 import bleed_html, edge_runs
+    from build_back import QR_MAPS, QR_WINDOW
     import front_services
 
     # ---- front: services list from service_lists.json (first entry) --------------------
@@ -60,12 +61,19 @@ def main():
         bo = export_set(html={'plain': str(ROOT / 'back_plain.html'), 'bleed': str(ROOT / 'back_bleed.html')},
                         trim=TRIM, bleed=BLEED, marks=MARKS, stem=bstem, outdir=str(OUT))
         print('\nBACK', bstem)
-        verify(bo['press'], trim=TRIM, bleed=BLEED, marks=MARKS)   # add qr_expect once the Maps QR exists
+        verify(bo['press'], qr_expect=QR_MAPS, qr_window=QR_WINDOW, ref=(1054, 1492),
+               trim=TRIM, bleed=BLEED, marks=MARKS)
         back_plain = bo['plain']
     else:
         back_plain = OUT / f'{bstem}_PROOF.pdf'
         pdf(ROOT / 'back_plain.html', back_plain, *TRIM)
-        print('\nBACK proof only:', back_plain.name, '(still to confirm: photos, Maps QR)')
+        subprocess.run(['pdftoppm', '-png', '-r', '300', '-singlefile', str(back_plain), str(OUT / '_back_proof')], check=True)
+        import cv2
+        im = cv2.imread(str(OUT / '_back_proof.png')); k = im.shape[1] / 1054
+        x0, y0, x1, y1 = QR_WINDOW
+        val = cv2.QRCodeDetector().detectAndDecode(im[int((y0 - 20) * k):int((y1 + 20) * k), int((x0 - 20) * k):int((x1 + 20) * k)])[0]
+        print('\nBACK proof only:', back_plain.name, '(still to confirm: honeycomb photos)')
+        print('back QR decode  ', val or 'EMPTY', ' PASS' if val == QR_MAPS else ' FAIL')
 
     # ---- 2-page approval PDF -------------------------------------------------------------
     from pypdf import PdfWriter
