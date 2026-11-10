@@ -8,16 +8,16 @@ Everything here rebuilds from source with one command.
 | Side | Version | Status |
 |---|---|---|
 | Front | v6 | **Press-ready.** Doctors' 12-line services list (7.0 pt), social row (Instagram, Facebook, TikTok, @handle) |
-| Back | v9 | **Proof only.** Honeycomb gallery; route map drawn exactly from the clinic's hand sketch, original map style; photos and QR still to confirm |
+| Back | v10 | **Proof only.** Honeycomb gallery; route map: Google Maps geometry + every landmark from the hand sketch, original map style; photos and QR still to confirm |
 
-Final files: `release/front-v6_back-v9/` (previous: `release/front-v6_back-v8/`, `release/front-v6_back-v7/`, `release/front-v6_back-v6/`, `release/front-v6_back-v5/`, `release/front-v5_back-v4/`)
+Final files: `release/front-v6_back-v10/` (previous: `release/front-v6_back-v9/`, `release/front-v6_back-v8/`, `release/front-v6_back-v7/`, `release/front-v6_back-v6/`, `release/front-v6_back-v5/`, `release/front-v5_back-v4/`)
 
 | File | Use |
 |---|---|
 | `ZoomDental_Flyer_A5_v6_PRESS_cropmarks_CMYK.pdf` | front, send to the printer |
 | `ZoomDental_Flyer_A5_v6_bleed_CMYK.pdf` | front, bleed only |
 | `ZoomDental_Flyer_A5_v6_plain.pdf` / `_300dpi.png` | front, screen proof |
-| `ZoomDental_Flyer_A5_BACK_v9_PROOF.pdf` / `_300dpi.png` | back, approval proof, not for print |
+| `ZoomDental_Flyer_A5_BACK_v10_PROOF.pdf` / `_300dpi.png` | back, approval proof, not for print |
 | `Zoom_Dental_Flyer_A5_Front_Back.pdf` | both sides, for WhatsApp approval |
 | `COLOUR_SPEC_v6.txt` | printer spec and change log |
 
@@ -79,12 +79,13 @@ Two things stop the back from going to print:
    `build_back.py` (search "QR<br>Google Maps") with the generated QR, then add `qr_expect` to the
    back `verify` call in `build_all.py`.
 
-The map (`map_svg()` in `build_back.py`) follows the clinic's hand sketch: ش عبد الرسول between the
-Autostrad (via ش الزهراء) and the Carrefour El-Daery / El-Haramain mall road, clinic on the south side
-opposite ماركت الفتح, next to سور الجيش. Schematic, not to scale.
+The map (`map_svg()` in `build_back.py`) takes its geometry from Google Maps (`reference/google_maps_*.jpg`)
+and its landmarks from the clinic's hand sketch: ش عبد الرسول from the Autostrad side (via ش الزهراء), clinic
+at the bend opposite ماركت الفتح, then south-east past سور الجيش to the Carrefour El-Daery / Hub 50 mall road.
+Schematic, not to scale.
 
 Then set `TAGS=0` (removes the PLACEHOLDER labels) and run
-`python3 build_all.py --back-press --back-version v10`.
+`python3 build_all.py --back-press --back-version v11`.
 
 ## Versioning
 
@@ -100,3 +101,4 @@ spec, commit, and tag `flyer-a5/front-vX_back-vY`.
 | `flyer-a5/front-v6_back-v7` | v6 | v7 | same map in the original map style |
 | `flyer-a5/front-v6_back-v8` | v6 | v8 | map in the v4 composition: ش عبد الرسول, أمام أسواق الفتح |
 | `flyer-a5/front-v6_back-v9` | v6 | v9 | map follows the hand sketch exactly, every landmark |
+| `flyer-a5/front-v6_back-v10` | v6 | v10 | map geometry from Google Maps, landmarks from the sketch |

@@ -1,0 +1,134 @@
+ZOOM DENTAL CLINIC — A5 FLYER v6 — PRINTER SPECIFICATION
+=====================================================
+
+TRIM        148 x 210 mm (A5), portrait
+BLEED       3 mm all round  -> artwork 154 x 216 mm
+PRESS PAGE  164 x 226 mm (includes crop-mark margin)
+RESOLUTION  vector text + 300 dpi minimum on all placed images
+COLOUR      CMYK, no spot plates required
+
+FILES
+  ZoomDental_Flyer_A5_v6_PRESS_cropmarks_CMYK.pdf   <- SEND THIS TO PRESS
+  ZoomDental_Flyer_A5_v6_bleed_CMYK.pdf             bleed only, no marks
+  ZoomDental_Flyer_A5_v6_plain.pdf                  148x210, RGB, for on-screen approval
+  ZoomDental_Flyer_A5_v6_300dpi.png                 raster proof
+
+BRAND TEAL
+  HEX          #0A7183
+  CMYK build   C 88  M 43  Y 39  K 10
+  Pantone ref  7715 C  (alt: 3155 C)
+  If matching to Pantone, 7715 C takes priority over the CMYK build.
+
+INK
+  Total area coverage (TAC) peak    256%   — within a 300% limit
+  No area exceeds 300%. No rich black anywhere in the artwork.
+  Crop marks are 100% K only (single plate) — do not convert to rich black.
+
+QR CODE
+  Target        https://zoom-dental-links.zoomdentalcliniccairo.workers.dev/?src=flyer
+  Error corr.   M
+  Printed size  24.7 mm  ->  module 0.433 mm
+  Quiet zone    4 modules, built into the artwork
+  Printed on a white panel. Do NOT scale below 24 mm or the modules
+  drop under the reliable print floor. Please proof-scan one sheet
+  off the press before the full run.
+
+FONTS
+  Cairo (Regular / Medium / SemiBold / Bold / Black) — Arabic
+  Montserrat (Medium / SemiBold) — Latin
+  All embedded and subsetted. No font files needed at your end.
+
+NOTES
+  - Background is pure white paper — no flat tint to print.
+  - The teal wedge (top-left) and the teal band (bottom) both run to
+    the bleed edge. Do not scale artwork to fit.
+
+CHANGES IN v2 (vs v1)
+  - Full logo lockup restored: ZOOM / DENTAL CLINIC / rule / Arabic tagline
+    Wordmark set in Questrial (closest match to the original letterforms:
+    shortened M vertex, circular O, flat Z terminals).
+  - Step arrows changed from thin stroked chevrons to solid filled arrows.
+  - Step headings Cairo Bold -> ExtraBold; descriptions Regular -> SemiBold.
+  - Sparkle marks corrected: were stretched to aspect 2.01 against a source
+    aspect of 1.23. Now placed uniformly at 98 x 80 px.
+  - Arabic tagline is placed as high-resolution art, not live type (Chromium
+    mis-shapes that specific string inside the scaled stage). Effective
+    resolution on the trim exceeds 1900 dpi. All other text remains live vector.
+
+v2 REVISION (this build)
+  - Bottom teal wave now spans the full sheet including bleed. Previously the
+    curve stopped at the trim edge and shelved flat into the bleed, leaving a
+    visible kink at the left edge of the press file.
+  - Location pin moved to the left of the address, matching the Instagram and
+    WhatsApp icons.
+  - Crop-mark layer rebuilt with no font resource, so preflight reports no
+    missing or non-embedded fonts.
+
+v3 REVISION (this build)
+  - Footer social row: Instagram, Facebook and TikTok icons followed by the handle
+    @zoom_dental_clinic_cairo (was a single Instagram icon without @).
+  - Footer icons (WhatsApp, social set, location pin) vertically centred on the body
+    of their text, measured, within 0.7 px.
+  - Bleed built by edge extension: the trim artwork is unchanged and each trim edge's
+    colour is carried 3 mm outward. Strips overlap the trim by 0.28 mm, so no seam.
+  - The back side is a separate file and is still a proof (placeholder photos, map, QR).
+
+v4 REVISION (this build)
+  - Services list expanded from 6 to 10 lines (refined from the clinic's 12-item list),
+    same column, same check bullets. Heading moved up 12 px; the list now runs from
+    under the heading to just above the phone pill. Text 9.8 pt, check icons centred
+    on each line. No other change.
+  - An alternative file with all 12 services is supplied as *_v6_ALT_12services_*.
+    Its list text is 7.1 pt.
+
+v6 REVISION (this build)
+  - Services list is now 11 lines: cleaning/polishing and whitening split back into two
+    lines; zirconia/Emax line reads "تركيبات زيركون وإيماكس". Text 8.9 pt.
+
+v6 REVISION (this build, 2026-11-03)
+  - Services list replaced with the doctors' signed list: all 12 services, exact wording and
+    order as given ("كشف شامل" … "زراعة الاسنان"), same column, same check bullets.
+    Text 7.0 pt (set by the longest line, "ابتسامة هوليوود الثابتة و المتحركة"). No other change.
+
+BACK v5 (proof, 2026-11-03)
+  - Header and photo grid replaced by a honeycomb gallery of regular pointy-top hexagons in three
+    sizes, all edges parallel: lateral cells R 215 (run past the page edges), diagonal cells
+    R 130, centre R 172.5 = the mean of the two, so every lateral/diagonal gap is exactly 12 px.
+    The centre holds the whole entrance with the facade sign. No outline-only cells. The top
+    row runs past the top trim by design; the flipped corner wedge shows top right.
+  - Title "اتعرّف على عيادتنا" and the old divider removed.
+  - Section title now "رعاية دقيقة بالتقنيات الحديثة" (set 9.5% smaller to clear the sparkles).
+  - Photos are the clinic's own (originals in photos-src/): centre entrance + sign, top-left
+    reception, top-right treatment room, left hallway, right treatment room detail,
+    bottom-left waiting area, bottom-right sterilisation.
+    Still placeholders: intraoral scanner photo (ph_scan.png), map, QR.
+
+BACK v6 (this release)
+  - Route map redrawn from the clinic's hand sketch: ش عبد الرسول between the
+    Autostrad (via ش الزهراء) and the Carrefour El-Daery / El-Haramain mall road,
+    clinic opposite ماركت الفتح next to سور الجيش. Two dashed routes, one from each end.
+  - Back is still a proof: photos and the Google Maps QR to confirm. Front unchanged (v6).
+
+BACK v7 (this release)
+  - Map restyled back to the original flyer style (tinted blocks, white street grid,
+    one teal main road, dashed routes, solid teal pin) with v6's layout from the
+    clinic's sketch. Clinic pin on the south kerb of ش عبد الرسول, labelled عيادة زووم.
+
+BACK v8 (this release)
+  - Map back to the v4 composition (diagonal teal road at the top, angled street grid,
+    pin below the road, shop icon, area names along the bottom). Road named ش عبد الرسول,
+    landmark "أمام أسواق الفتح", route turns off the road down to the clinic as in the
+    clinic's sketch. No north arrow and no "MAP PLACEHOLDER" tag.
+
+BACK v9 (this release)
+  - Map follows the clinic's hand sketch exactly, in the original map style: Autostrad,
+    بنزينة, ش الزهراء with التوحيد والنور and the mosque; ش عبد الرسول with every shop the
+    sketch names on both sides; مسجد المعراج and ش الإسراء; سور الجيش and النصر للملابس;
+    the Carrefour El-Daery / El-Haramain mall road. Routes from both ends to the clinic.
+
+BACK v10 (proof)
+- Route map: geometry taken from Google Maps (reference/google_maps_1-3.jpg), landmarks from the
+  clinic's hand sketch. ش عبد الرسول comes in from the west, the clinic sits at the bend, and the
+  street turns south-east towards the Carrefour El-Daery / mall road.
+- "مول الحرمين" in the sketch read as "مول الخمسين" (Hub 50 Mall on Google Maps). To confirm.
+- Same colours as v9: tint #DFECEE, blocks #C4DDE1, wall #9CC4CB, roads and pin TEAL #0A7183.
