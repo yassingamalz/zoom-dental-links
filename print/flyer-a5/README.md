@@ -8,16 +8,16 @@ Everything here rebuilds from source with one command.
 | Side | Version | Status |
 |---|---|---|
 | Front | v6 | **Press-ready.** Doctors' 12-line services list (7.0 pt), social row (Instagram, Facebook, TikTok, @handle) |
-| Back | v11 | **Proof only.** Honeycomb gallery; route map: Google Maps geometry + every landmark from the hand sketch, original map style, labels enlarged and de-overlapped; photos and QR still to confirm |
+| Back | v12 | **Proof only.** Honeycomb gallery; route map: Google Maps geometry + every landmark from the hand sketch, original map style, labels enlarged and de-overlapped; photos and QR still to confirm |
 
-Final files: `release/front-v6_back-v11/` (previous: `release/front-v6_back-v10/`, `release/front-v6_back-v9/`, `release/front-v6_back-v8/`, `release/front-v6_back-v7/`, `release/front-v6_back-v6/`, `release/front-v6_back-v5/`, `release/front-v5_back-v4/`)
+Final files: `release/front-v6_back-v12/` (previous: `release/front-v6_back-v11/`, `release/front-v6_back-v10/`, `release/front-v6_back-v9/`, `release/front-v6_back-v8/`, `release/front-v6_back-v7/`, `release/front-v6_back-v6/`, `release/front-v6_back-v5/`, `release/front-v5_back-v4/`)
 
 | File | Use |
 |---|---|
 | `ZoomDental_Flyer_A5_v6_PRESS_cropmarks_CMYK.pdf` | front, send to the printer |
 | `ZoomDental_Flyer_A5_v6_bleed_CMYK.pdf` | front, bleed only |
 | `ZoomDental_Flyer_A5_v6_plain.pdf` / `_300dpi.png` | front, screen proof |
-| `ZoomDental_Flyer_A5_BACK_v11_PROOF.pdf` / `_300dpi.png` | back, approval proof, not for print |
+| `ZoomDental_Flyer_A5_BACK_v12_PROOF.pdf` / `_300dpi.png` | back, approval proof, not for print |
 | `Zoom_Dental_Flyer_A5_Front_Back.pdf` | both sides, for WhatsApp approval |
 | `COLOUR_SPEC_v6.txt` | printer spec and change log |
 
@@ -81,12 +81,12 @@ Two things stop the back from going to print:
 
 The map (`map_svg()` in `build_back.py`) takes its geometry from Google Maps (`reference/google_maps_*.jpg`)
 and its landmarks from the clinic's hand sketch: ش عبد الرسول from the Autostrad side (via ش الزهراء), clinic
-at the bend opposite ماركت الفتح, then south-east past سور الجيش to the Carrefour El-Daery / Hub 50 mall road.
+at the bend opposite ماركت الفتح, then south-east past سور الجيش to the Carrefour El-Daery / مول 50 (Hub 50) road.
 Schematic, not to scale. After moving a label, run `python3 check_map_labels.py` (lists overlaps; Cairo's
 tall line box makes it flag near-misses too, so confirm on the render).
 
 Then set `TAGS=0` (removes the PLACEHOLDER labels) and run
-`python3 build_all.py --back-press --back-version v12`.
+`python3 build_all.py --back-press --back-version v13`.
 
 ## Versioning
 
@@ -104,3 +104,4 @@ spec, commit, and tag `flyer-a5/front-vX_back-vY`.
 | `flyer-a5/front-v6_back-v9` | v6 | v9 | map follows the hand sketch exactly, every landmark |
 | `flyer-a5/front-v6_back-v10` | v6 | v10 | map geometry from Google Maps, landmarks from the sketch |
 | `flyer-a5/front-v6_back-v11` | v6 | v11 | map labels larger, horizontal, no overlaps |
+| `flyer-a5/front-v6_back-v12` | v6 | v12 | mall label مول 50, mall corner cleaned up |

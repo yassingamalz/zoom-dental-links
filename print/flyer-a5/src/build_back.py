@@ -355,7 +355,7 @@ def map_svg():
     Content: the clinic's hand sketch (reference/map_hand_sketch_clinic.jpg), every road and
     landmark it names. Geometry: Google Maps (reference/google_maps_*.jpg). ش عبد الرسول runs
     in from the west and the clinic sits at its bend; east of the clinic the street turns
-    south-east towards the east road between كارفور الدائري and مول الخمسين (Hub 50 Mall).
+    south-east towards the east road between كارفور الدائري and مول 50 (Hub 50 Mall).
     Schematic, not to scale.
 
     v11: every label horizontal (street names follow their street), larger type
@@ -364,7 +364,7 @@ def map_svg():
     """
     MARK_W = b64(A / 'zoom-logo-mark-white.svg', 'image/svg+xml')
     T, BG = TEAL, '#DFECEE'
-    W0, BEND, E0 = (44, 128), (220, 118), (456, 198)      # main street: west end, clinic bend, east road
+    W0, BEND, E0 = (44, 128), (220, 118), (456, 184)      # main street: west end, clinic bend, east road
     XL, XR, HW = 44, 456, 13
     import math
 
@@ -441,14 +441,14 @@ def map_svg():
             + t(291, 116, 'ماركت الفتح')
             + t(300, 92, 'أسواق عرفة')
             + box(318, 48, 84, 'مسجد المعراج')
-            + t(348, 140, 'ماركت الربيع')
+            + t(346, 132, 'ماركت الربيع')
             + t(356, 112, 'صيدلية')
             + t(isr[0] - 14, 76, 'ش الإسراء', 12, rot=-86)
             + t(426, 134, 'كنتاكي') + t(426, 150, 'ومؤمن')
             # south of the east part
             + t(258, 188, 'سور الجيش')
             + t(338, 205, 'النصر للملابس', 12)
-            + pill(426, 13, 86, 'كارفور الدائري') + pill(432, 200, 78, 'مول الخمسين') +
+            + pill(426, 13, 86, 'كارفور الدائري') + pill(428, 205, 64, 'مول 50', 12.5) +
             # clinic, at the bend, south side
             f"<path d='{pin}' fill='{T}' stroke='#fff' stroke-width='2.6' stroke-linejoin='round'/>"
             f"<image href='{MARK_W}' x='{px - 20:.1f}' y='{py - 20:.1f}' width='40' height='40'/>"
