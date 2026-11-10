@@ -8,16 +8,16 @@ Everything here rebuilds from source with one command.
 | Side | Version | Status |
 |---|---|---|
 | Front | v6 | **Press-ready.** Doctors' 12-line services list (7.0 pt), social row (Instagram, Facebook, TikTok, @handle) |
-| Back | v6 | **Proof only.** Honeycomb gallery; route map drawn from the clinic's hand sketch; photos and QR still to confirm |
+| Back | v7 | **Proof only.** Honeycomb gallery; route map from the clinic's hand sketch in the original map style; photos and QR still to confirm |
 
-Final files: `release/front-v6_back-v6/` (previous: `release/front-v6_back-v5/`, `release/front-v5_back-v4/`)
+Final files: `release/front-v6_back-v7/` (previous: `release/front-v6_back-v6/`, `release/front-v6_back-v5/`, `release/front-v5_back-v4/`)
 
 | File | Use |
 |---|---|
 | `ZoomDental_Flyer_A5_v6_PRESS_cropmarks_CMYK.pdf` | front, send to the printer |
 | `ZoomDental_Flyer_A5_v6_bleed_CMYK.pdf` | front, bleed only |
 | `ZoomDental_Flyer_A5_v6_plain.pdf` / `_300dpi.png` | front, screen proof |
-| `ZoomDental_Flyer_A5_BACK_v6_PROOF.pdf` / `_300dpi.png` | back, approval proof, not for print |
+| `ZoomDental_Flyer_A5_BACK_v7_PROOF.pdf` / `_300dpi.png` | back, approval proof, not for print |
 | `Zoom_Dental_Flyer_A5_Front_Back.pdf` | both sides, for WhatsApp approval |
 | `COLOUR_SPEC_v6.txt` | printer spec and change log |
 
@@ -84,7 +84,7 @@ Autostrad (via ش الزهراء) and the Carrefour El-Daery / El-Haramain mall 
 opposite ماركت الفتح, next to سور الجيش. Schematic, not to scale.
 
 Then set `TAGS=0` (removes the PLACEHOLDER labels) and run
-`python3 build_all.py --back-press --back-version v7`.
+`python3 build_all.py --back-press --back-version v8`.
 
 ## Versioning
 
@@ -97,3 +97,4 @@ spec, commit, and tag `flyer-a5/front-vX_back-vY`.
 | `flyer-a5/front-v5_back-v4` | v5 | v4 | 11 services; back white header, taller gallery |
 | `flyer-a5/front-v6_back-v5` | v6 | v5 | doctors' 12 services; honeycomb gallery |
 | `flyer-a5/front-v6_back-v6` | v6 | v6 | route map redrawn from the clinic's hand sketch |
+| `flyer-a5/front-v6_back-v7` | v6 | v7 | same map in the original map style |
